@@ -22,7 +22,26 @@ MACRO START_MOVE
    ld [move_dir], a
 ENDM
 
+SECTION "Player Variables", WRAM0
+
+input_lock:       DS 1
+move_dir:         DS 1 ; 0 = right, 1 = left, 2 = up, 3 = down, 4 = none
+previous_input:   DS 1
+current_input:    DS 1
+pressed_input:    DS 1
+
 SECTION "Player Movement", ROM0	
+
+init_player::
+   xor a
+   ld [input_lock], a
+   ld a, 4
+   ld [move_dir], a
+   ld a, 15
+   ld [previous_input], a
+   ld [current_input], a
+   ld [pressed_input], a
+   ret
 
 update_player::
 	;; check input lock
@@ -36,6 +55,7 @@ update_player::
 
 	;; read input if needed
 	call read_input
+   call move
 	ret
 
 	.skip_input:
@@ -48,7 +68,11 @@ update_player::
    	.not_move:
    ret
 
+
 read_input::
+   ld a, [current_input]
+   ld [previous_input], a
+
    ;; ACTIVAR BITS DE LECTURA
    ld a, SELECT_PAD
    ld [rJOYP], a  ;; we are selecting the buttons by inserting their rDir on rJOYP
@@ -56,6 +80,31 @@ read_input::
    ld a, [rJOYP]  ;; we do this 3 times to wait before bytes readjust correctly
    ld a, [rJOYP]
 
+   ld [current_input], a
+
+   ;; solo se contará que un input es valido
+   ;; si la tecla no estaba pulsada previamente
+
+   ;; para ello usamos una operacion logica
+   ;; si son iguales y negamos uno, el resultado
+   ;; será cero. Si es cero omitimos el input
+
+   ld b, a                 ;; current
+   ld a, [previous_input]  ;; previous
+   cpl                     ;; !previous
+   and b                   ;; current && !previous
+   jr z, .delete_input     ;; será 0 cuando sean iguales 
+   cpl 
+   ld [pressed_input], a
+   ret
+
+   .delete_input:
+   ld a, 15 
+   ld [pressed_input], a
+   ret   
+
+move:
+   ld a, [pressed_input]
 
    bit RIGHT_PRESSED, a 
    jr z, .right_pad_pressed
@@ -68,9 +117,7 @@ read_input::
 
    bit DOWN_PRESSED, a 
    jr z, .down_pad_pressed
-
    ret
-
 
    ;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right_pad_pressed:
@@ -88,8 +135,6 @@ read_input::
    .down_pad_pressed:
       START_MOVE 3
    ret
-
-
 
 continue_move:
 	ld a, [move_dir]

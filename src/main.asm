@@ -27,9 +27,8 @@ init::
    ld [rBGP], a
    ld [rOBJP0], a
 
-   ;; inicializar input lock
-   xor a
-   ld [input_lock], a
+   ;; inicializar variables de jugador
+   call init_player
 
    call load_tiles
 
@@ -61,10 +60,6 @@ sprite:  DB   24,   16,   $20,   %00000000
 
 SECTION "Player", OAM
 player: DS 8
-
-SECTION "Variables", WRAM0
-input_lock:: DS 1
-move_dir::   DS 1 ; 0 = right, 1 = left, 2 = up, 3 = down, 4 = none
 
 SECTION "OAM DMA", HRAM
 
