@@ -7,6 +7,10 @@ main::
    call init
    call fade_out_black
    call fade_in_black
+   .game_loop:
+      call vblank
+      call read_input
+   jr .game_loop
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)
 
@@ -50,6 +54,9 @@ SECTION "Initial Data", ROM0
 ;16x16 obj     Y     X   Tile   Att
 sprite:  DB   24,   16,   $20,   %00000000
          DB   24,   24,   $22,   %00000000
+
+SECTION "Player", OAM
+player: DS 8
 
 SECTION "OAM DMA", HRAM
 

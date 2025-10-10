@@ -23,8 +23,8 @@ DEF rLCDC_16x8_obj_enable 	equ 2 ; set to enable 16x8 sprites
 DEF rLCDC_screen_power	 	equ 7 ; set to turn on screen, res to turn off
 
 ;; rJOYP control bits
-DEF SELECT_BUTTONS equ $10  ;; it selects the button panel (select, start, B, A)
-DEF SELECT_PAD equ $20      ;; it selects pad panel (up, down, left, right)
+DEF SELECT_BUTTONS 	equ $10  ;; it selects the button panel (select, start, B, A)
+DEF SELECT_PAD 		equ $20      ;; it selects pad panel (up, down, left, right)
 DEF RIGHT_PRESSED	equ 0
 DEF LEFT_PRESSED	equ 1
 DEF UP_PRESSED		equ 2
