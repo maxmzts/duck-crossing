@@ -5,11 +5,11 @@ SECTION "Main Loop", ROM0[$150]
 
 main::
    call init
-   call fade_out_black
-   call fade_in_black
+   ;call fade_out_black
+   ;call fade_in_black
    .game_loop:
       call vblank
-      call read_input
+      call update_player
    jr .game_loop
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)
@@ -22,10 +22,14 @@ init::
 
    call enable_obj
 
-   ;; define palletes
+   ;; definir paletas 
    ld a, DEFAULT_PALETTE
    ld [rBGP], a
    ld [rOBJP0], a
+
+   ;; inicializar input lock
+   xor a
+   ld [input_lock], a
 
    call load_tiles
 
@@ -57,6 +61,10 @@ sprite:  DB   24,   16,   $20,   %00000000
 
 SECTION "Player", OAM
 player: DS 8
+
+SECTION "Variables", WRAM0
+input_lock:: DS 1
+move_dir::   DS 1 ; 0 = right, 1 = left, 2 = up, 3 = down, 4 = none
 
 SECTION "OAM DMA", HRAM
 
