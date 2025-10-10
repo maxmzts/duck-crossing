@@ -56,6 +56,7 @@ update_player::
 	;; read input if needed
 	call read_input
    call move
+
 	ret
 
 	.skip_input:
@@ -88,11 +89,12 @@ read_input::
    ;; para ello usamos una operacion logica
    ;; si son iguales y negamos uno, el resultado
    ;; será cero. Si es cero omitimos el input
-
-   ld b, a                 ;; current
+   
    ld a, [previous_input]  ;; previous
-   cpl                     ;; !previous
-   and b                   ;; current && !previous
+   ld b, a
+   ld a, [current_input]   ;; current
+   cpl                     ;; !current
+   and b                   ;; !current && previous
    jr z, .delete_input     ;; será 0 cuando sean iguales 
    cpl 
    ld [pressed_input], a
