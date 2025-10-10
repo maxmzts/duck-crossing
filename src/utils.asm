@@ -22,6 +22,24 @@ vblank::
 	jr nz, .loop
 	ret
 
+;; NO VA BIEN
+;; Input:  C (Vblank count)
+multiple_vblanks::
+	ld hl, rLY
+	ld a, VBLANK_LAYER
+	.loop:
+		cp [hl]
+	jr nz, .loop
+	dec c
+	jr nz, .espera
+	ret
+
+	.espera:
+		xor a
+		cp [hl]
+	jr nz, .espera
+	jr multiple_vblanks
+
 ;; Input:  HL (Source), A (Value), B (Bytes) 
 memset::
 		ld [hl+], a
@@ -39,12 +57,116 @@ memcpy::
 	jr nz, memcpy
 	ret
 
-;; Input:  D (HIGH byte of the region to copy)
+;; Input:  A (HIGH byte of the region to copy)
 rutinaDMA::
-	ld [rDMA], d ;; activates the copy of the given region XX00
+	ld [rDMA], a ;; activates the copy of the given region XX00
 	ld a, 40
 	.espera:
 		dec a
 	jr nz, .espera
 	ret
-.fin
+.fin:
+
+;; Input:  HL (Source Tile), DE (Destiny format:$8XX0)
+load_tile::
+	ld b, $10
+	call memcpy
+	ret
+
+;; Screen has 1024 bytes of data
+clear_background::
+	ld hl, VRAM_SCREEN
+	ld a, 0
+	ld b, 255
+	call memset ; 256 bytes cleared
+	ld b, 255
+	call memset ; 512 bytes cleared
+	ld b, 255
+	call memset ; 768 bytes cleared
+	ld b, 255
+	call memset ; 1024 bytes cleared
+	ret
+
+;; Input:  HL (Tilemap)
+load_32x32_tilemap::
+	ld de, VRAM_SCREEN
+	ld b, 255
+	call memcpy ; 256 bytes cleared
+	ld b, 255
+	call memcpy ; 512 bytes cleared
+	ld b, 255
+	call memcpy ; 768 bytes cleared
+	ld b, 255
+	call memcpy ; 1024 bytes cleared
+	ret
+
+fade_out_black::
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_1_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_2_PALLETE
+	ld [rBGP], a
+	
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_3_PALLETE
+	ld [rBGP], a
+	
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_4_PALLETE
+	ld [rBGP], a
+	
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_5_PALLETE
+	ld [rBGP], a
+	
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_6_PALLETE
+	ld [rBGP], a
+	
+	ret
+
+fade_in_black::
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_6_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_5_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_4_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_3_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_2_PALLETE
+	ld [rBGP], a
+
+	ld c, 10
+	call multiple_vblanks
+	ld a, FADE_1_PALLETE
+	ld [rBGP], a
+
+	ld c, 6
+	call multiple_vblanks
+	ld a, DEFAULT_PALETTE
+	ld [rBGP], a
+
+	ret
