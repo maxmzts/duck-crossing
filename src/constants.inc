@@ -4,7 +4,7 @@ DEF rLCDC 		equ $FF40
 DEF rLY			equ $FF44 ; for VBlank
 DEF rDMA		equ $FF46
 DEF rBGP		equ $FF47
-DEF rOBJP		equ $FF48
+DEF rOBJP0		equ $FF48
 
 ;; Memory map
 DEF VRAM_START	equ $8000 ; starts on the tile region

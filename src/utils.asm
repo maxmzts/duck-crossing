@@ -57,6 +57,12 @@ memcpy::
 	jr nz, memcpy
 	ret
 
+enable_obj::
+	ld hl, rLCDC
+	set rLCDC_obj_enable, [hl]
+	set rLCDC_16x8_obj_enable, [hl]
+	ret
+
 ;; Input:  A (HIGH byte of the region to copy)
 rutinaDMA::
 	ld [rDMA], a ;; activates the copy of the given region XX00
@@ -85,6 +91,13 @@ clear_background::
 	call memset ; 768 bytes cleared
 	ld b, 255
 	call memset ; 1024 bytes cleared
+	ret
+
+clear_oam::
+	ld hl, OAM_START
+	ld a, 0
+	ld b, 160
+	call memset
 	ret
 
 ;; Input:  HL (Tilemap)
