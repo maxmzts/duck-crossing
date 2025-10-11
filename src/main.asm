@@ -8,6 +8,8 @@ main::
    ;call fade_out_black
    ;call fade_in_black
    .game_loop:
+      ;call vblank_interruption
+      ;call vblank_with_interrupt
       call vblank
       call update_player
    jr .game_loop
@@ -29,6 +31,9 @@ init::
 
    ;; inicializar variables de jugador
    call init_player
+
+   ;; Inicializar interrupciones
+   ;call enable_vblank_interrupt
 
    call load_tiles
 

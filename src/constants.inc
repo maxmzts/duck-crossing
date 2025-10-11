@@ -30,6 +30,17 @@ DEF LEFT_PRESSED	equ 1
 DEF UP_PRESSED		equ 2
 DEF DOWN_PRESSED	equ 3
 
+;; Interrupt enable
+DEF rIE 		equ $FFFF
+def B_IE_JOYPAD equ 4 ; 1 = joypad interrupt is enabled [r/w]
+def B_IE_SERIAL equ 3 ; 1 = serial interrupt is enabled [r/w]
+def B_IE_TIMER  equ 2 ; 1 = timer  interrupt is enabled [r/w]
+def B_IE_STAT   equ 1 ; 1 = STAT   interrupt is enabled [r/w]
+def B_IE_VBLANK equ 0 ; 1 = VBlank interrupt is enabled [r/w]
+
+;; Interrupt flag
+DEF rIF 		equ $FF0F
+DEF B_IF_VBLANK equ 0
 
 ;; PALLETES
 DEF DEFAULT_PALETTE	equ %11100100
@@ -45,3 +56,5 @@ DEF TILE_SIZE equ $10
 
 ;; Vblank
 DEF VBLANK_LAYER equ 144
+
+

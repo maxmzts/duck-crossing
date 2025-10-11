@@ -1,7 +1,7 @@
 INCLUDE "constants.inc"
 INCLUDE "macros.inc"
 
-SECTION "Utils", ROM0
+SECTION FRAGMENT "Utils", ROM0
 
 lcd_on::
 	ld hl, rLCDC
@@ -22,7 +22,6 @@ vblank::
 	jr nz, .loop
 	ret
 
-;; NO VA BIEN
 ;; Input:  C (Vblank count)
 multiple_vblanks::
 	ld hl, rLY
