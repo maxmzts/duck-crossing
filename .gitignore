@@ -1,4 +1,5 @@
 /obj
+/obj/game.map
 /*.gb
 /*.sav
-
+/src/testing
