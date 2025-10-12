@@ -1,4 +1,5 @@
 INCLUDE "constants.inc"
+include "macros.inc"
 
 MACRO MOVE_SPRITE
    ld hl, player + \2
@@ -22,6 +23,14 @@ MACRO START_MOVE
    ld [move_dir], a
 ENDM
 
+SECTION "Initial Data", ROM0
+;16x16 obj     Y     X   Tile   Att
+sprite:  DB   24,   64,   $20,   %00000000
+         DB   24,   72,   $22,   %00000000
+
+SECTION "Player", OAM
+player: DS 8
+
 SECTION "Player Variables", WRAM0
 
 input_lock:       DS 1
@@ -29,12 +38,21 @@ move_dir:         DS 1 ; 0 = right, 1 = left, 2 = up, 3 = down, 4 = none
 previous_input:   DS 1
 current_input:    DS 1
 pressed_input:    DS 1
+state:            DS 1 ; 0 = alive, 1 = dead
 
 SECTION "Player Movement", ROM0	
 
 init_player::
+   ;; load sprite tiles
+   MEMCPY tiles_player, $8000 + ($20 * $10), 64
+
+   ;; cargar datos iniciales del jugador a la OAM
+   MEMCPY sprite, player, 8 
+
+   ;; inicializar variables
    xor a
    ld [input_lock], a
+   ld [state], a
    ld a, 4
    ld [move_dir], a
    ld a, 15
@@ -44,6 +62,11 @@ init_player::
    ret
 
 update_player::
+   ;; check input lock
+   ld a, [state]
+   cp 0
+   jr nz, .dead
+
 	;; check input lock
 	ld a, [input_lock]
 	or a
@@ -68,6 +91,9 @@ update_player::
    		call continue_move	
    	.not_move:
    ret
+
+   .dead:
+      ret
 
 
 read_input::
@@ -170,4 +196,9 @@ continue_move:
 
    .down:
       MOVE_SPRITE 1,0
+   ret
+
+die:
+   ld a, 1
+   ld [state], a
    ret
