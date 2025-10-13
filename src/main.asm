@@ -8,10 +8,10 @@ main::
    ;call fade_out_black
    ;call fade_in_black
    .game_loop:
-      ;call vblank_interruption
-      ;call vblank_with_interrupt
       call physics
-      call vblank
+      ;call vblank
+      ;call vblank_interruption
+      call vblank_with_interrupt
       call update_player
       call update_car
    jr .game_loop
@@ -35,7 +35,7 @@ init::
    call init_player
 
    ;; Inicializar interrupciones
-   ;call enable_vblank_interrupt
+   call enable_vblank_interrupt
 
    ;; coche de prueba
    call init_car
