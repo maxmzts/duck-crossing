@@ -45,8 +45,8 @@ vblank_interrupt_handler::
 	jr vblank_handler_continue
 
 ;; cambiar direccion de rom si 
-;; usamos la interrupcion STAT
-SECTION "VBLANK Handler 2", ROM0[$0048]
+;; usamos la interrupcion Timer
+SECTION "VBLANK Handler 2", ROM0[$0050]
 vblank_handler_continue::
 	pop af
 	pop af ;; delete the ret from wait_vbklank
@@ -62,7 +62,7 @@ enable_vblank_interrupt::
 	ldh [rIF], a
 	;; set flag to 0
 	ld [vblank_flag], a
-	reti
+	ret
 
 ;; USAR SOLO SI LA UNICA INTERRUPCION
 ;; ACTIVADA ES VBLANK

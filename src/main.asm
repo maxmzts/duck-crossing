@@ -19,6 +19,7 @@ main::
    halt   ;; Halt the CPU (stop procesing here)
 
 init::
+   di
    call lcd_off
 
    call clear_background
@@ -36,6 +37,7 @@ init::
 
    ;; Inicializar interrupciones
    call enable_vblank_interrupt
+   call enable_lyc_interrupt
 
    ;; coche de prueba
    call init_car
@@ -45,7 +47,7 @@ init::
    call load_tilemap
 
    call lcd_on
-   ret
+   reti
 
 load_tiles::
    ;; environment tiles

@@ -9,9 +9,11 @@ lcd_on::
 	ret
 
 lcd_off::
+	di
 	call vblank
 	ld hl, rLCDC
 	res 7, [hl]
+	ei
 	ret
 
 vblank::
