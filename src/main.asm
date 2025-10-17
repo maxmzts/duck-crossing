@@ -30,6 +30,7 @@ init::
    ;; definir paletas 
    ld a, DEFAULT_PALETTE
    ld [rBGP], a
+   ld a, %11100001
    ld [rOBJP0], a
 
    ;; inicializar variables de jugador
