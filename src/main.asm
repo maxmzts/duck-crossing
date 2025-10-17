@@ -50,15 +50,11 @@ init::
    reti
 
 load_tiles::
-   ;; environment tiles
-   ld hl, metal_wall_tile
-   ld de, $8010
-   call load_tile
-
+   MEMCPY TileLabel, $8000, (14*16)
    ret
 
 load_tilemap::
-   ld hl, test_tilemap
+   ld hl, level1
    call load_32x32_tilemap
    ret
 

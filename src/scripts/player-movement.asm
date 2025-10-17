@@ -25,8 +25,8 @@ ENDM
 
 SECTION "Initial Data", ROM0
 ;16x16 obj     Y     X   Tile   Att
-sprite:  DB   24,   64,   $20,   %00000000
-         DB   24,   72,   $22,   %00000000
+sprite:  DB   100,   64,   $20,   %00000000
+         DB   100,   72,   $22,   %00000000
 
 SECTION "Player", OAM
 player: DS 8
@@ -44,7 +44,7 @@ SECTION "Player Movement", ROM0
 
 init_player::
    ;; load sprite tiles
-   MEMCPY tiles_player, $8000 + ($20 * $10), 64
+   MEMCPY duck_player, $8000 + ($20 * $10), 64
 
    ;; cargar datos iniciales del jugador a la OAM
    MEMCPY sprite, player, 8 
