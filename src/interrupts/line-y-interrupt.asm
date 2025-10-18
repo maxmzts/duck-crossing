@@ -6,15 +6,15 @@ DEF rLCD_STAT 	equ $FF41
 DEF rSCY 		equ $FF42
 DEF rSCX 		equ $FF43
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DOCUMENTACION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interrupción de LY de STAT 
 ;;
-;; Las interrupciones de STAT no son como las
-;; de vblank, no se activan en el IE y el IM.
-;; En su lugar se activan haciendo set de los
+;; Las interrupciones de STAT igual que la de
+;; vblank, se activan en el IE, en el bit 1.
+;; La diferencia es que después de eso, deben
+;; activarse también haciendo set de los 
 ;; bits del rLCD_STAT el cual funciona como 
 ;; el IM pero solo para eventos de la pantalla.
 ;; 
@@ -30,11 +30,32 @@ DEF rSCX 		equ $FF43
 ;; actualizar rLYC para la siguiente
 ;; interrupción.
 ;;
-;; ------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scroll horizontal
 ;; 
-;; 
-;;
+;; Para hacer scroll de nuestras carreteras
+;; utilizamos un espacio de datos en la WRAM
+;; que contiene la info de cada carretera de
+;; un nivel:
+;; 		- Linea de comienzo
+;;		- Velocidad de scroll
+;; 		- Dirección
+;; Con esto y el STAT handler de la interrup.
+;; de LYC podemos hacer el scroll. Para que 
+;; el handler sepa cuál es la siguiente línea
+;; que necesita scroll, hay otros dos bytes 
+;; en WRAM que sirven de "apuntador" a la
+;; dirección de memoria del siguiente scroll
+;; en el espacio de datos. Esto no solo sirve
+;; para gestionar ese scroll cuando llegue, 
+;; sino para saber cuándo devolver el scroll a
+;; 0. Si el siguiente LYC no coincide con la 
+;; linea del siguiente scroll necesario es que
+;; la carretera ha terminado y debe poner SCX
+;; de nuevo a cero.
+;; Cada frame es necesario reinciar el proceso
+;; restaurando el valor del apuntador a la
+;; primera carretera y LYC a la linea de scroll. 
 ;;  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
