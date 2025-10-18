@@ -44,7 +44,7 @@ SECTION "Player Movement", ROM0
 
 init_player::
    ;; load sprite tiles
-   MEMCPY duck_player, $8000 + ($20 * $10), 64
+   MEMCPY duck_player_down, $8000 + ($20 * $10), 64
 
    ;; cargar datos iniciales del jugador a la OAM
    MEMCPY sprite, player, 8 
@@ -154,20 +154,24 @@ move:
 
    ;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right_pad_pressed:
-      START_MOVE 0
-   ret
+    START_MOVE 0
+    call update_player_tiles
+    ret
 
-   .left_pad_pressed:
-      START_MOVE 1
-   ret 
+.left_pad_pressed:
+    START_MOVE 1
+    call update_player_tiles
+    ret 
 
-   .up_pad_pressed:
-      START_MOVE 2
-   ret
+.up_pad_pressed:
+    START_MOVE 2
+    call update_player_tiles
+    ret
 
-   .down_pad_pressed:
-      START_MOVE 3
-   ret
+.down_pad_pressed:
+    START_MOVE 3
+    call update_player_tiles
+    ret
 
 continue_move:
 	ld a, [move_dir]
@@ -202,6 +206,37 @@ continue_move:
    .down:
       MOVE_SPRITE 1,0
    ret
+
+update_player_tiles::
+    ld a, [move_dir]
+    cp 0
+    jr z, .right
+    cp 1
+    jr z, .left
+    cp 2
+    jr z, .up
+    cp 3
+    jr z, .down
+    ret
+
+.right:
+    MEMCPY duck_player_right, $8000 + ($20 * $10), 64
+    jr .done
+
+.left:
+    MEMCPY duck_player_left, $8000 + ($20 * $10), 64
+    jr .done
+
+.up:
+    MEMCPY duck_player_up, $8000 + ($20 * $10), 64
+    jr .done
+
+.down:
+    MEMCPY duck_player_down, $8000 + ($20 * $10), 64
+
+.done:
+    ret
+
 
 die:
    ld a, 1
