@@ -11,11 +11,12 @@ main::
       ;call physics
       ;call vblank
       ;call vblank_interruption
+      call update_player
       call vblank_with_interrupt
       call reset_vblank_flag
       call restart_roads_scroll_loop
-      call update_player
-      call update_car
+      call render_player
+      ;call update_car
    jr .game_loop
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)

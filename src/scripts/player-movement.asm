@@ -65,12 +65,12 @@ update_player::
    ;; check input lock
    ld a, [state]
    cp 0
-   jr nz, .dead
+   ret nz
 
 	;; check input lock
 	ld a, [input_lock]
 	or a
-	jr nz, .skip_input
+	ret nz
 
 	;; no hay lock poner anular movimiento
 	ld a, 4
@@ -82,19 +82,24 @@ update_player::
 
 	ret
 
-	.skip_input:
-   	ld hl, input_lock
-   	dec [hl]   
-   	ld a, [hl]
-   	and %00000001 ;; dará 0 cuando el numero sea par
-   	jr nz, .not_move
-   		call continue_move	
-   	.not_move:
+render_player::
+   ;; check input lock
+   ld a, [state]
+   cp 0
+   ret nz
+
+   ;; check input lock
+   ld a, [input_lock]
+   or a
+   ret z
+
+   ld hl, input_lock
+   dec [hl]   
+   ld a, [hl]
+   and %00000001 ;; dará 0 cuando el numero sea par
+   ret z
+   call continue_move
    ret
-
-   .dead:
-      ret
-
 
 read_input::
    ld a, [current_input]
