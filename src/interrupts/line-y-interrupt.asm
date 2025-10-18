@@ -174,6 +174,10 @@ DB     79 ,    1,     0
 DB     87 ,    3,     0
 .end:
 
+road_tiles_level_1:
+DB     4, 6, 10, 11
+.end
+
 SECTION "Roads Level 1", WRAM0
 w_next_road_pointer: DS 2
 w_roads_level_1: DS roads_level_1.end - roads_level_1
@@ -199,6 +203,10 @@ init_level_1_roads::
 
 	ret
 
+;; Pendiente de implementar
+;; INPUT:  DE (Level Roads WRAM info)
+
+;; Implementacion con nivel 1
 restart_roads_scroll_loop::
 	;; restaurar puntero a la primera carretera
 	ld hl, w_next_road_pointer

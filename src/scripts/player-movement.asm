@@ -203,7 +203,7 @@ continue_move:
       MOVE_SPRITE 1,0
    ret
 
-die:
+kill_player:
    ld a, 1
    ld [state], a
    ret
