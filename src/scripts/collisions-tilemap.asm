@@ -63,6 +63,7 @@ check_road_tile:
 		cp [hl]
 		ret z
 		inc b
+		inc hl
 		dec c
 	jr nz, .loop
 
@@ -71,7 +72,7 @@ check_road_tile:
 	pop af   ;; delete ret to get_address_of_tile_being_touched
 	pop af   ;; delete push hl
 	pop af   ;; delete ret to physics
-	pop af   ;; delete ret to mainloop
+	;pop af   ;; delete ret to mainloop
 	ret
 
 

@@ -32,10 +32,10 @@ physics::
 	;; check if the tile is a car tile
 	ld a, $04
 	cp [hl]
+	call z, kill_player
 	ld a, $05
+	call z, kill_player
 	cp [hl]
-
-	call kill_player
 
 	ret
 
