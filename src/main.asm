@@ -8,10 +8,12 @@ main::
    ;call fade_out_black
    ;call fade_in_black
    .game_loop:
-      call physics
+      ;call physics
       ;call vblank
       ;call vblank_interruption
       call vblank_with_interrupt
+      call reset_vblank_flag
+      call restart_roads_scroll_loop
       call update_player
       call update_car
    jr .game_loop
@@ -19,8 +21,9 @@ main::
    halt   ;; Halt the CPU (stop procesing here)
 
 init::
-   di
    call lcd_off
+
+   di
 
    call clear_background
    call clear_oam
@@ -37,8 +40,7 @@ init::
    call init_player
 
    ;; Inicializar interrupciones
-   call enable_vblank_interrupt
-   call enable_lyc_interrupt
+   call enable_interrupts
 
    ;; coche de prueba
    call init_car
@@ -46,6 +48,8 @@ init::
    call load_tiles
 
    call load_tilemap
+
+   call init_level_1_roads
 
    call lcd_on
    reti
@@ -59,6 +63,13 @@ load_tilemap::
    call load_32x32_tilemap
    ret
 
+enable_interrupts:
+   call enable_vblank_interrupt
+   call enable_lyc_interrupt
+   ;; clear rIF before any interrupt
+   xor a
+   ldh [rIF], a
+   ret
 
 
 SECTION "OAM DMA", HRAM
