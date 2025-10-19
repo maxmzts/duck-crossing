@@ -42,7 +42,7 @@ physics::
 ;; OUTPUT: A (scroll tile offset)
 get_scroll_tile_offset:
 	ld a, [road_to_offset]
-	ld hl, w_roads_level_1+2 ;; last scx
+	ld hl, w_current_level_roads+3 ;; last scx
 	.loop:
 		cp 0
 		jr z, .endloop

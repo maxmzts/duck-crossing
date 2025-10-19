@@ -1,11 +1,6 @@
 include "constants.inc"
 include "macros.inc"
 
-DEF rLYC 		equ $FF45
-DEF rLCD_STAT 	equ $FF41
-DEF rSCY 		equ $FF42
-DEF rSCX 		equ $FF43
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DOCUMENTACION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,6 +99,7 @@ stat_handler:
 	ld [rLYC], a ;; parar en 8 lineas el scroll
 
 	inc hl
+	inc hl ;; saltar el dato TY
 
 	;; obtener velocidad
 	ld a, [hl+]  ;; vel
@@ -147,42 +143,6 @@ stat_handler:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;SECTION "Scroll buffers pointers", HRAM
-;draw_buffer_pointer: DS 2
-;fill_buffer_pointer: DS 2
-
-SECTION "Level 1 roads", ROM0
-;; en el primer nivel hay 4 carreteras
-;; necesitamos conocer su LY y velocidad 
-;; de movimiento. 2 bytes
-;; --------------
-;; Velocidades
-;;
-;; Rapidisimo: 	2 		px/frame
-;;						No se T-T
-;; Rapido: 			1 		px/frame
-;; 					%00000000 todos los frames
-;; Normal:			0.5   px/frame (1 cada 2)
-;;						%00000001 frames pares
-;; Lento:			0.25	px/frame (1 cada 4)
-;; 					%00000011 multiplo de 4
-roads_level_1:
-;;  Linea ,  Vel,  Last SCX
-DB     31 ,    0,     0
-DB     47 ,    1,     0
-DB     79 ,    1,     0
-DB     87 ,    3,     0
-.end:
-
-road_tiles_level_1:
-DB     4, 6, 10, 11
-.end
-
-SECTION "Roads Level 1", WRAM0
-w_next_road_pointer: DS 2
-w_roads_level_1: DS roads_level_1.end - roads_level_1
-w_velocity_frame: DS 1
-
 SECTION "LYC interrupt", ROM0
 
 enable_lyc_interrupt::
@@ -193,24 +153,13 @@ enable_lyc_interrupt::
 	set 6, [hl]
 	ret
 
-init_level_1_roads::
-	MEMCPY roads_level_1, w_roads_level_1, roads_level_1.end - roads_level_1
-	
-	call restart_roads_scroll_loop
-
-	xor a
-	ld [w_velocity_frame], a
-
-	ret
-
-;; Pendiente de implementar
-;; INPUT:  DE (Level Roads WRAM info)
-
-;; Implementacion con nivel 1
+;; esto se debe ejecutar al finalizar el 
+;; dibujado de un frame para preparar el
+;; scroll del siguiente
 restart_roads_scroll_loop::
 	;; restaurar puntero a la primera carretera
 	ld hl, w_next_road_pointer
-	ld de, w_roads_level_1 
+	ld de, w_current_level_roads 
 	ld [hl], d
 	inc hl
 	ld [hl], e

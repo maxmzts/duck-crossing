@@ -43,14 +43,10 @@ init::
    ;; Inicializar interrupciones
    call enable_interrupts
 
-   ;; coche de prueba
-   call init_car
-
    call load_tiles
 
-   call load_tilemap
-
-   call init_level_1_roads
+   ;; quitar cuando haya gestor de escenas
+   call level_1_init
 
    call lcd_on
    reti
@@ -59,21 +55,9 @@ load_tiles::
    MEMCPY Tileset1, $8000, Tileset1.end - Tileset1
    ret
 
-load_tilemap::
-   ld hl, level1
-   call load_32x32_tilemap
-   ret
-
 enable_interrupts:
    call enable_vblank_interrupt
-   call enable_lyc_interrupt
    ;; clear rIF before any interrupt
    xor a
    ldh [rIF], a
    ret
-
-
-SECTION "OAM DMA", HRAM
-
-OAMDMA::
-;DS rutinaDMA.fin - rutinaDMA
