@@ -184,3 +184,21 @@ fade_in_black::
 	ld [rBGP], a
 
 	ret
+
+mute_APU::
+	xor a
+	ld [NR52], a
+	ret
+
+sound_init::
+	ld a, $80
+	ld [NR52], a
+
+	ld a, $77
+	ld [NR50], a
+
+	ld a, $FF
+	ld [NR51], a
+
+	ret
+	

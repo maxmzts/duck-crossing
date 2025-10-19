@@ -154,18 +154,34 @@ move:
 
    ;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right_pad_pressed:
+      push af
+      ld a, SFX_MOVE_R
+      call sfx_play
+      pop af
       START_MOVE 0
    ret
 
    .left_pad_pressed:
+      push af
+      ld a, SFX_MOVE_L
+      call sfx_play
+      pop af
       START_MOVE 1
    ret 
 
    .up_pad_pressed:
+      push af
+      ld a, SFX_MOVE_U
+      call sfx_play
+      pop af
       START_MOVE 2
    ret
 
    .down_pad_pressed:
+      push af
+      ld a, SFX_MOVE_D
+      call sfx_play
+      pop af
       START_MOVE 3
    ret
 

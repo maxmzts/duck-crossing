@@ -58,3 +58,34 @@ DEF TILE_SIZE equ $10
 DEF VBLANK_LAYER equ 144
 
 
+;; Constants Sound
+;; Channel 2
+DEF NR21    equ $FF16   ;;Duracion, forma de onda
+DEF NR22    equ $FF17   ;;Volumen y envolvente
+DEF NR23    equ $FF18   ;;Frecuencia los 8 ultimos bits
+DEF NR24    equ $FF19   ;;Frecuencia primeros 3 bits y trigger para activar canal
+
+;; Channel 4
+DEF NR41    equ $FF20   ;;Timer
+DEF NR42    equ $FF21   ;;Volumen y envolvente
+DEF NR43    equ $FF22   ;;Frecuencia y random
+DEF NR44    equ $FF23   ;;Control para activar
+
+;; Channel 5/Mezcal
+DEF NR50    equ $FF24   ;;Volumen Master
+DEF NR51    equ $FF25   ;;Paneo del sonido por los lados
+DEF NR52    equ $FF26   ;;Para encender el audio y los canales
+
+;; Datos del sonido
+DEF FREQ_R          equ $06D7
+;;DEF FREQ_L          equ $0733
+;;DEF FREQ_U          equ $05C0
+;;DEF FREQ_D          equ $04A8
+
+;; SFX Player
+DEF SFX_NONE        equ $FF
+DEF SFX_MOVE_R     equ 0
+DEF SFX_MOVE_L      equ 1
+DEF SFX_MOVE_U      equ 2
+DEF SFX_MOVE_D      equ 3
+

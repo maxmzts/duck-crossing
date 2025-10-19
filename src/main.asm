@@ -11,6 +11,8 @@ main::
       ;call vblank
       ;call vblank_interruption
       call update_player
+      ;;sonido
+      call sfx_update
       call vblank_with_interrupt
       call reset_vblank_flag
       call restart_roads_scroll_loop
@@ -39,6 +41,11 @@ init::
 
    ;; inicializar variables de jugador
    call init_player
+
+   ;; Inicializar el sonido
+   call mute_APU
+   call sound_init
+   call sfx_init
 
    ;; Inicializar interrupciones
    call enable_interrupts
