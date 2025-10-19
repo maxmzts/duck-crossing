@@ -190,35 +190,6 @@ continue_move:
    ret
 
 
-   ;; ACTUALIZAR POSICIÓN DEL JUGADOR
-   .right:
-      MOVE_SPRITE 1,1
-   ret
-
-   .left:
-      MOVE_SPRITE -1,1
-   ret 
-
-   .up:
-      MOVE_SPRITE -1,0
-   ret
-
-   .down:
-      MOVE_SPRITE 1,0
-   ret
-
-update_player_tiles::
-    ld a, [move_dir]
-    cp 0
-    jr z, .right
-    cp 1
-    jr z, .left
-    cp 2
-    jr z, .up
-    cp 3
-    jr z, .down
-    ret
-
 .right:
     MEMCPY duck_player_right, $8000 + ($20 * $10), 64
     jr .done
@@ -237,8 +208,7 @@ update_player_tiles::
 .done:
     ret
 
-
-die:
+kill_player:
    ld a, 1
    ld [state], a
    ret

@@ -8,7 +8,6 @@ main::
    ;call fade_out_black
    ;call fade_in_black
    .game_loop:
-      ;call physics
       ;call vblank
       ;call vblank_interruption
       call update_player
@@ -16,6 +15,7 @@ main::
       call reset_vblank_flag
       call restart_roads_scroll_loop
       call render_player
+      call physics
       ;call update_car
    jr .game_loop
    di     ;; Disable Interrupts
@@ -56,7 +56,7 @@ init::
    reti
 
 load_tiles::
-   MEMCPY TileLabel, $8000, (14*16)
+   MEMCPY Tileset1, $8000, Tileset1.end - Tileset1
    ret
 
 load_tilemap::

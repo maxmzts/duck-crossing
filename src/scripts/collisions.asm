@@ -12,9 +12,53 @@ object_2_center: 		DS 1
 min_size_btw_centers:	DS 1
 is_colliding:			DS 1 ; 0 = false, 1 = true
 
+road_to_offset::   		DS 1
+
 SECTION "Gestion de colisiones", ROM0
 
 physics::
+	ld hl, player
+	call get_address_of_tile_being_touched
+	;; hl now has the tile address on a road
+	;; we need to add the scroll ofset to the
+	;; address
+	push hl
+	call get_scroll_tile_offset
+	;; returns the offset in a
+	pop hl
+	add l
+	ld l, a
+
+	;; check if the tile is a car tile
+	ld a, $04
+	cp [hl]
+	call z, kill_player
+	ld a, $05
+	call z, kill_player
+	cp [hl]
+
+	ret
+
+;; OUTPUT: A (scroll tile offset)
+get_scroll_tile_offset:
+	ld a, [road_to_offset]
+	ld hl, w_roads_level_1+2 ;; last scx
+	.loop:
+		cp 0
+		jr z, .endloop
+		inc hl
+		inc hl
+		inc hl
+		dec a
+	jr .loop
+	.endloop:
+	ld a, [hl]
+	srl a  ;; /2
+	srl a  ;; /4
+	srl a  ;; /8
+	ret
+	
+old_physics::
 	;; Centro Y jugador
 	ld a, [player]
 	add PLAYER_CENTER_Y
@@ -61,7 +105,7 @@ physics::
 	;; al jugador
 	ld a, [is_colliding]
 	cp 0
-	call nz, die
+	call nz, kill_player
 
 	.end
 	ret
