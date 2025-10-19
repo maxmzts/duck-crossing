@@ -56,7 +56,7 @@ init::
    reti
 
 load_tiles::
-   MEMCPY TileLabel, $8000, (14*16)
+   MEMCPY Tileset1, $8000, Tileset1.end - Tileset1
    ret
 
 load_tilemap::
