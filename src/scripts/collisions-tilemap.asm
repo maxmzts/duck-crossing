@@ -38,8 +38,9 @@ get_address_of_tile_being_touched::
 	push hl
 
 	;; check if TY is the one of the roads
-	ld hl, road_tiles_level_1
-	ld c, road_tiles_level_1.end - road_tiles_level_1
+	ld hl, w_current_level_roads + 1 ; TY data
+	ld a, [w_current_level_roads_count]
+	ld c, a
 	call check_road_tile
 	;; send road tile to offset
 	ld hl, road_to_offset
@@ -63,6 +64,10 @@ check_road_tile:
 		cp [hl]
 		ret z
 		inc b
+		;; go to next TY slot of the array
+		inc hl
+		inc hl
+		inc hl
 		inc hl
 		dec c
 	jr nz, .loop
