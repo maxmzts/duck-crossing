@@ -48,8 +48,15 @@ sfx_update::
         cp SFX_MOVE_D
         jr z, .do_r
 
+        cp SFX_KILL
+        jr z, .do_kill
+
         ret
 
     .do_r:
         call sfx_move_r
+        ret
+
+    .do_kill:
+        call sfx_kill
         ret

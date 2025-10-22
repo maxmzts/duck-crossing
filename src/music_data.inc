@@ -1,0 +1,75 @@
+
+SECTION "Musica Data", ROM0
+
+;;Nota, duracion(frames)
+
+music_song0:
+    DB LOW(FREQ_A4),    10, HIGH(FREQ_A4)
+    DB LOW(FREQ_C5),    8,  HIGH(FREQ_C5)
+    DB LOW(FREQ_D5),    8,  HIGH(FREQ_D5)
+    DB LOW(FREQ_E5),    10, HIGH(FREQ_E5)
+
+    DB LOW(FREQ_D5),    8,  HIGH(FREQ_D5)
+    DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
+    DB LOW(FREQ_B4),    8,  HIGH(FREQ_B4)
+    DB LOW(FREQ_A4),    14, HIGH(FREQ_A4)
+
+    DB LOW(FREQ_G4),    10, HIGH(FREQ_G4)
+    DB LOW(FREQ_B4),    8,  HIGH(FREQ_B4)
+    DB LOW(FREQ_C5),    10, HIGH(FREQ_C5)
+    DB LOW(FREQ_D5),    8,  HIGH(FREQ_D5)
+
+    DB LOW(FREQ_E5),    10, HIGH(FREQ_E5)
+    DB LOW(FREQ_C5),    8,  HIGH(FREQ_C5)
+    DB LOW(FREQ_B4),    12, HIGH(FREQ_B4)
+    DB LOW(FREQ_A4),    14, HIGH(FREQ_A4)
+
+    DB MUS_END
+
+music_menu:
+    DB LOW(FREQ_A4),    12, HIGH(FREQ_A4)
+    DB LOW(FREQ_C5),    10, HIGH(FREQ_C5)
+    DB LOW(FREQ_E5),    10, HIGH(FREQ_E5)
+    DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
+
+    DB LOW(FREQ_G4),    12, HIGH(FREQ_G4)
+    DB LOW(FREQ_B4),    10, HIGH(FREQ_B4)
+    DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
+    DB LOW(FREQ_A4),    14, HIGH(FREQ_A4)
+
+    DB LOW(FREQ_B4),    8,  HIGH(FREQ_B4)
+    DB LOW(FREQ_C5),    10, HIGH(FREQ_C5)
+    DB LOW(FREQ_D5),    10, HIGH(FREQ_D5)
+    DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
+
+    DB LOW(FREQ_A4),    14, HIGH(FREQ_A4)
+    
+    DB MUS_END
+
+music_death:
+    DB LOW(FREQ_A4),    6,  HIGH(FREQ_A4)
+    DB LOW(FREQ_E4),    5,  HIGH(FREQ_E4)
+    DB LOW(FREQ_F4),    5,  HIGH(FREQ_F4)
+    DB LOW(FREQ_E4),    6,  HIGH(FREQ_E4)
+
+    DB LOW(FREQ_Gs4),   4,  HIGH(FREQ_Gs4)
+    DB LOW(FREQ_A4),    8,  HIGH(FREQ_A4)
+    DB LOW(FREQ_C5),    6,  HIGH(FREQ_C5)
+    DB LOW(FREQ_B4),    6,  HIGH(FREQ_B4)
+
+    DB LOW(FREQ_A4),    6,  HIGH(FREQ_A4)
+    DB LOW(FREQ_G4),    6,  HIGH(FREQ_G4)
+    DB LOW(FREQ_F4),    6,  HIGH(FREQ_F4)
+    DB LOW(FREQ_E4),    8,  HIGH(FREQ_E4)
+
+    DB LOW(FREQ_D4),    8,  HIGH(FREQ_D4)
+    DB LOW(FREQ_F4),    6,  HIGH(FREQ_F4)
+    DB LOW(FREQ_E4),    6,  HIGH(FREQ_E4)
+    DB LOW(FREQ_C4),    10, HIGH(FREQ_C4)
+
+    DB MUS_REST
+
+SONG_TABLE::
+    DW music_song0
+    DW music_menu
+    DW music_death

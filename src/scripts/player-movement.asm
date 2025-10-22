@@ -220,6 +220,14 @@ continue_move:
    ret
 
 kill_player:
+   push af
+   ld a, SFX_KILL
+   call sfx_play
+   pop af
+
+   ld a, SONG_DEATH
+   call music_play_id
+   
    ld a, 1
    ld [state], a
    ret

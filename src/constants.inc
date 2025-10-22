@@ -60,6 +60,14 @@ DEF VBLANK_LAYER equ 144
 
 ;; Constants Sound
 ;; Channel 2
+DEF NR10    equ $FF10   ;;Duracion, forma de onda
+
+DEF NR11    equ $FF11   ;;Duracion, forma de onda
+DEF NR12    equ $FF12   ;;Volumen y envolvente
+DEF NR13    equ $FF13   ;;Frecuencia los 8 ultimos bits
+DEF NR14    equ $FF14  ;;Frecuencia primeros 3 bits y trigger para activar canal
+
+;; Channel 2
 DEF NR21    equ $FF16   ;;Duracion, forma de onda
 DEF NR22    equ $FF17   ;;Volumen y envolvente
 DEF NR23    equ $FF18   ;;Frecuencia los 8 ultimos bits
@@ -76,16 +84,40 @@ DEF NR50    equ $FF24   ;;Volumen Master
 DEF NR51    equ $FF25   ;;Paneo del sonido por los lados
 DEF NR52    equ $FF26   ;;Para encender el audio y los canales
 
-;; Datos del sonido
-DEF FREQ_R          equ $06D7
-;;DEF FREQ_L          equ $0733
-;;DEF FREQ_U          equ $05C0
-;;DEF FREQ_D          equ $04A8
+;; Datos del sonido SFX
+DEF FREQ_R          equ $06D7   ;; Sonido del movimiento
+DEF FREQ_L          equ $0734   ;; Sonido de tecla en menú
+DEF FREQ_U          equ $05C0   ;; Sonido de tecla en menú
 
 ;; SFX Player
 DEF SFX_NONE        equ $FF
-DEF SFX_MOVE_R     equ 0
+DEF SFX_MOVE_R      equ 0
 DEF SFX_MOVE_L      equ 1
 DEF SFX_MOVE_U      equ 2
 DEF SFX_MOVE_D      equ 3
+DEF SFX_KILL        equ 4
+
+;; Datos del sonido música
+DEF FREQ_A4         equ $06D6
+DEF FREQ_F4         equ $0733
+DEF FREQ_C5         equ $0706
+DEF FREQ_E5         equ $0739
+DEF FREQ_G4         equ $06B2
+DEF FREQ_B4         equ $06F7
+DEF FREQ_D5         equ $0721
+DEF FREQ_F5         equ $0744
+DEF FREQ_G5         equ $0759
+DEF FREQ_A5         equ $076B
+DEF FREQ_C4         equ $060B
+DEF FREQ_E4         equ $0672
+DEF FREQ_D4         equ $0642
+DEF FREQ_Gs4        equ $06C4
+
+;; Música
+;; Música ID's
+DEF SONG_MAIN       equ 0
+DEF SONG_MENU       equ 1
+DEF SONG_DEATH      equ 2
+DEF MUS_END         equ $FF     ;; Fin de la canción, loop
+DEF MUS_REST        equ $FE   ;; Silencio
 
