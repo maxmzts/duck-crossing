@@ -46,7 +46,7 @@ init::
    call load_tiles
 
    ;; quitar cuando haya gestor de escenas
-   call level_2_init
+   call level_1_init
 
    call lcd_on
    reti
