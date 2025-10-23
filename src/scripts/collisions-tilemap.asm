@@ -35,25 +35,30 @@ get_address_of_tile_being_touched::
 	call convert_y_to_ty
 	ld e, a
 
-	push hl
-
-	;; check if TY is the one of the roads
-	ld hl, w_current_level_roads + 1 ; TY data
-	ld a, [w_current_level_roads_count]
-	ld c, a
-	call check_road_tile
-	;; send road tile to offset
-	ld hl, road_to_offset
-	ld [hl], b
-
-	pop hl
-
 	ld a, [hl]
 	add 8 			;; Poner centro de sprite
 	call convert_x_to_tx
-	;; 2. Calculate the VRAM address using TX and TY
+	ld d, a
+
+	;; 2. check if TY is the one of the roads
+	ld hl, w_current_level_roads + 1 ; TY data
+	ld a, [w_current_level_roads_count]
+	ld c, a
+	ld a, e
+	call check_road_tile
+	call get_scroll_tile_offset
+	push de 
+	call fix_tile_offset
+	pop de
+	ld d, a  ;; introducir fixed tile offset
+
+
+	;; 3. Calculate the VRAM address using TX and TY
 	ld l, e
+	ld a, d
 	call calculate_address_from_tx_and_ty
+	ld a, [hl]
+	ld [tile_ID_colliding], a 
 	ret
 
 ;; INPUT:  A (TY),  HL (road tiles array), C (number of roads)
@@ -75,24 +80,75 @@ check_road_tile:
 	;; no road --> skip routine
 
 	pop af   ;; delete ret to get_address_of_tile_being_touched
-	pop af   ;; delete push hl
 	pop af   ;; delete ret to physics
-	;pop af   ;; delete ret to mainloop
+	ret
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; INPUT:  B (road tile to offset)
+;; OUTPUT: A (scroll tile offset)
+get_scroll_tile_offset:
+	ld a, b
+	ld hl, w_current_level_roads+3 ;; last scx
+	.loop:
+		cp 0
+		jr z, .endloop
+		inc hl
+		inc hl
+		inc hl
+		inc hl
+		dec a
+	jr .loop
+	.endloop:
+	ld a, [hl]
+	srl a  ;; /2
+	srl a  ;; /4
+	srl a  ;; /8
+	ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Función para comprobar si el scroll que se debe 
+;; aplicar en tiles produciría un overflow. Buscamos
+;; evitar que se compruebe la colisión en la línea 
+;; de abajo. Pasos:
+;;	
+;; 1.   Se calcula los tiles necesarios para hacer overflow
+;; 2.   Se resta los tiles de scroll con lo anterior
+;; 3.A  Si da negativo es que no se hace overflow
+;; 3.B  Si da positivo es que se hace overflow y se tiene
+;;      que restar la diferencia
+;;
+;; INPUT:  D (TX), A (scroll tile offset)
+;; OUTPUT: A (fixed scroll tile offset)
+fix_tile_offset:
+	push af     ; guardar TScroll
+	ld a, $1F   ; End of X line
+	sub d       ; Final - TX = tiles to overflow (TTO)
+	ld b, a     ; B = TTO
+
+	;; comprobar si se produce overflow
+	pop af 		; recuperar TScroll
+	ld c, a     ; C = TScroll 
+	sub b       ; TScroll - TTO = TDiff
+	ld b, a     ; B = TDiff  (TTO ya no hace falta)
+	ld a, d     ; A = TX
+	jr c, .skip
+	
+	;; si no carry, se produce overflow, se debe restar la diferencia
+	sub b   	; TX - TDiff
+	ret
+
+	;; si hay carry, no se produce overflow, se suma TScroll normalmente
+	.skip:
+	add c		; TX + TScroll
 	ret
 
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Converts a value in pixel coordinates to VRAM tilemap
-;; coordinates. The value is a sprite X-coordinate
-;; and takes into account the non-visible 8 pixels
-;; on the left of the screen.
-;;
-;; 📥 INPUT:
-;; A: Sprite X-coordinate value
-;; 🔙 OUTPUT:
-;; A: Associated VRAM Tilemap TX-coordinate value
-;:
+;; INPUT:  A (Sprite X)
+;; OUTPUT: A (Sprite TX)
+
 convert_x_to_tx:
 	sub 8
 	srl a
@@ -102,16 +158,9 @@ convert_x_to_tx:
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Converts a value in pixel coordinates to VRAM tilemap
-;; coordinates. The value is a sprite Y-coordinate
-;; and takes into account the non-visible 16 pixels
-;; on the upper side of the screen.
-;;
-;; 📥 INPUT:
-;; A: Sprite Y-coordinate value
-;; 🔙 OUTPUT:
-;; A: Associated VRAM Tilemap TY-coordinate value
-;:
+;; INPUT:  A (Sprite Y)
+;; OUTPUT: A (Sprite TY)
+
 convert_y_to_ty:
 	sub 16
 	srl a
@@ -122,16 +171,11 @@ convert_y_to_ty:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Calculates an VRAM Tilemap Address from itx tile
-;; coordinates (TX, TY). The tilemap is 32x32, and
-;; address $9800 is assumed as the address of tile (0,0)
-;; in tile coordinates.
+;; coordinates (TX, TY). 
 ;;
-;; 📥 INPUT:
-;; L: TY coordinate
-;; A: TX coordinate
-;; 🔙 OUTPUT:
-;; HL: Address where the (TX, TY) tile is stored
-;:
+;; INPUT:   L (TY),  A (TX)
+;; OUTPUT:  HL (Address where the (TX, TY) tile is stored)
+
 calculate_address_from_tx_and_ty:
 	ld de, $9800
 	ld h, 0

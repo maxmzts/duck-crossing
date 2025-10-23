@@ -44,15 +44,15 @@ include "constants.inc"
 ;; 					%00000011 multiplo de 4
 ;; --------------------------------------------
 ;; Ejemplo 
-
-SECTION "Example", ROM0
-roads_level_example:
-;;     LY ,  TY,  Vel,  Last SCX
-DB     31 ,   4,    0,     0
-DB     47 ,   6,    1,     0
-DB     79 ,  10,    1,     0
-DB     87 ,  11,    3,     0
-.end:
+;;
+	SECTION "Example", ROM0
+	roads_level_example:
+	;;     LY ,  TY,  Vel,  Last SCX
+	DB     31 ,   4,    0,     0
+	DB     47 ,   6,    1,     0
+	DB     79 ,  10,    1,     0
+	DB     87 ,  11,    3,     0
+	.end:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -83,7 +83,7 @@ w_victory_flag:: DS 1
 
 SECTION "Level Manager Code", ROM0
 
-;; INPUT:  HL (level roads array), B (amount of roads)
+;; INPUT:  HL (level roads array), B (roads array length)
 level_man_init::
 	;; inicializar puntero
 	ld a, h
@@ -97,7 +97,10 @@ level_man_init::
 	ld [rLYC], a
 
 	;; poner cantidad de carreteras
+	;; la longitud del array entre 4 
 	ld a, b
+	srl a ; /2
+	srl a ; /4
 	ld [w_current_level_roads_count], a
 
 	;; inicializar info de carreteras

@@ -84,6 +84,36 @@ stat_handler:
 	ld a, [rLY]
 	cp [hl]
 	jr z, .update_road_scroll
+	;; CHAPUZA
+	;; la PPU no para de dibujar cuando se ejecuta
+	;; este handler, esto produce que se desactive el 
+	;; scroll a mitad de línea, más a la derecha cuantas
+	;; mas instrucciones se pongan antes de cambiar el 
+	;; SCX a 0. Esto hace que las ruedas de los coches
+	;; se corten y estén quietas.
+	;; Pongo los nop para que se cambie el scroll
+	;; fuera de la zona visible de la pantalla.
+	nop 
+	nop
+	nop
+	nop
+	nop 
+	nop
+	nop
+	nop
+	nop 
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
 	xor a
 	ld [rSCX], a
 	;; ademas se debe meter en rLYC la linea

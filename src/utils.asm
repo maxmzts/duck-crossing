@@ -24,6 +24,15 @@ vblank::
 	jr nz, .loop
 	ret
 
+;; Espera al modo 0 de la PPU (Hblank)
+wait_hblank_start::
+	ld hl, rLCD_STAT
+	ld a, %00000011
+	.loop:
+		and [hl]
+	jr nz, .loop
+	ret
+
 ;; Input:  C (Vblank count)
 multiple_vblanks::
 	ld hl, rLY
