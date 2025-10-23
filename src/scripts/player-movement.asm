@@ -83,6 +83,7 @@ update_player::
 	ret
 
 render_player::
+    call update_player_tiles
    ;; check input lock
    ld a, [state]
    cp 0
@@ -155,22 +156,18 @@ move:
    ;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right_pad_pressed:
     START_MOVE 0
-    call update_player_tiles
     ret
 
 .left_pad_pressed:
     START_MOVE 1
-    call update_player_tiles
     ret 
 
 .up_pad_pressed:
     START_MOVE 2
-    call update_player_tiles
     ret
 
 .down_pad_pressed:
     START_MOVE 3
-    call update_player_tiles
     ret
 
 continue_move:
