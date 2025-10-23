@@ -57,10 +57,8 @@ SECTION FRAGMENT "Utils", ROM0
 enable_vblank_interrupt::
 	ld hl, rIE
 	set B_IE_VBLANK, [hl] 
-	;; clear rIF before setting vblank
-	xor a
-	ldh [rIF], a
 	;; set flag to 0
+	xor a
 	ld [vblank_flag], a
 	ret
 
@@ -78,7 +76,12 @@ vblank_with_interrupt::
 		and a		;; check if the flag is zero
 	jr z, .wait     ;; keep waiting
 	xor a
-	ld [hl], a      ;; set back to zero for the next frame
+	ld [vblank_flag], a      ;; set back to zero for the next frame
+	ret
+
+reset_vblank_flag::
+	xor a
+	ld [vblank_flag], a      ;; set back to zero for the next frame
 	ret
 
 SECTION "VBLANK_FLAG", WRAM0

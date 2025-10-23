@@ -1,7 +1,11 @@
 ;; Main control registers
 DEF rJOYP		equ $FF00
 DEF rLCDC 		equ $FF40
+DEF rLCD_STAT 	equ $FF41
+DEF rSCY 		equ $FF42
+DEF rSCX 		equ $FF43
 DEF rLY			equ $FF44 ; for VBlank
+DEF rLYC 		equ $FF45
 DEF rDMA		equ $FF46
 DEF rBGP		equ $FF47
 DEF rOBJP0		equ $FF48
