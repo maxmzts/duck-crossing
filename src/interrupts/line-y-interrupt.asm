@@ -183,6 +183,17 @@ enable_lyc_interrupt::
 	set 6, [hl]
 	ret
 
+disable_lyc_interrupt::
+	ld hl, rIE
+	res B_IE_STAT, [hl]
+	;; reset del "LYC select bit" del rSTAT
+	ld hl, rLCD_STAT
+	res 6, [hl]
+	;; Limpiar scroll horizontal por si acaso
+	xor a
+	ld [rSCX], a
+	ret
+
 ;; esto se debe ejecutar al finalizar el 
 ;; dibujado de un frame para preparar el
 ;; scroll del siguiente

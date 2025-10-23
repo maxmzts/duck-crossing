@@ -61,4 +61,15 @@ DEF TILE_SIZE equ $10
 ;; Vblank
 DEF VBLANK_LAYER equ 144
 
+;; Scene IDs
+DEF SCENE_TITLE     equ 0
+DEF SCENE_LEVEL_1   equ 1
+DEF SCENE_GAME_OVER equ 2
+
+;; Button bits (para detectar A presionado)
+DEF A_PRESSED       equ 0
+DEF B_PRESSED       equ 1
+DEF SELECT_PRESSED  equ 2
+DEF START_PRESSED   equ 3
+
 
