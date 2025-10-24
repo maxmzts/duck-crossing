@@ -67,9 +67,18 @@ music_death:
     DB LOW(FREQ_E4),    6,  HIGH(FREQ_E4)
     DB LOW(FREQ_C4),    10, HIGH(FREQ_C4)
 
-    DB MUS_REST
+    DB MUS_END
+
+music_victory:
+    DB LOW(FREQ_C5),    4,  HIGH(FREQ_C5)
+    DB LOW(FREQ_C5),    4,  HIGH(FREQ_C5)
+    DB LOW(FREQ_E5),    6,  HIGH(FREQ_E5)
+    DB LOW(FREQ_G5),    6,  HIGH(FREQ_G5)
+    DB LOW(FREQ_A5),    18, HIGH(FREQ_A5)
+    DB MUS_END
 
 SONG_TABLE::
     DW music_song0
     DW music_menu
     DW music_death
+    DW music_victory
