@@ -6,7 +6,7 @@ DEF BUS_TILES 		EQU $04 ;; cambiar
 DEF BUS_TILES_SIZE 	EQU 2
 
 
-;; ID de victorua
+;; ID de victoria
 DEF VIC_TILES 		EQU $0A
 DEF VIC_TILES_SIZE 	EQU 4
 
@@ -24,10 +24,11 @@ update_physics::
 
 physics::
 	;; Tomar puntero a VRAM calculado en el update
+	;; CORRECCIÓN: El orden ahora es correcto
 	ld a, [tile_colliding_pointer]
-	ld h, a
+	ld h, a                            ; tile_colliding_pointer tiene el byte alto (H)
 	ld a, [tile_colliding_pointer+1]
-	ld l, a
+	ld l, a                            ; tile_colliding_pointer+1 tiene el byte bajo (L)
 
 	ld a, [hl]
 	ld [tile_ID_colliding], a
@@ -70,4 +71,3 @@ check_victory_collision:
 		dec b
 	jr nz, .loop
 	ret
-	

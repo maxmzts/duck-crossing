@@ -26,7 +26,7 @@ scene_manager_change_scene::
     ld [w_next_scene], a
     ld a, 1
     ld [w_scene_change_pending], a
-    reti
+    ret 
 
 ;; Procesa el cambio de escena si hay uno pendiente
 scene_manager_update::
@@ -39,6 +39,10 @@ scene_manager_update::
     
     ;; Limpiar pantalla (pero NO el OAM todavía)
     call clear_background
+    
+    ;; Reiniciar variables críticas de colisión
+    ;; Esto previene que se detecte la victoria del nivel anterior
+    call reset_collision_variables
     
     ;; Obtener la nueva escena
     ld a, [w_next_scene]
@@ -83,6 +87,24 @@ scene_manager_update::
     
     ;; Encender pantalla
     call lcd_on
+    ret
+
+;; Reinicia las variables de colisión
+reset_collision_variables:
+    ;; Reiniciar el puntero de colisión a una dirección segura
+    ;; Usamos $9800 (inicio del tilemap) como valor por defecto
+    ld a, $98
+    ld [tile_colliding_pointer], a
+    xor a  ; $00
+    ld [tile_colliding_pointer+1], a
+    
+    ;; Reiniciar el ID del tile colisionando
+    ;; Ponemos 0 que normalmente es un tile vacío
+    ld [tile_ID_colliding], a
+    
+    ;; Reiniciar el flag de victoria por si acaso
+    ld [w_victory_flag], a
+    
     ret
 
 ;; Actualiza la lógica de la escena actual
