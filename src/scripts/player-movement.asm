@@ -31,6 +31,9 @@ sprite:  DB   100,   64,   $20,   %00000000
 SECTION "Player", OAM
 player: DS 8
 
+SECTION "Player copy", WRAM0
+player_copy: DS 8
+
 SECTION "Player Variables", WRAM0
 
 input_lock:       DS 1
@@ -83,8 +86,9 @@ update_player::
 	ret
 
 render_player::
-    call update_player_tiles
-   ;; check input lock
+   call update_player_tiles
+
+   ;; check dead
    ld a, [state]
    cp 0
    ret nz
@@ -100,6 +104,7 @@ render_player::
    and %00000001 ;; dará 0 cuando el numero sea par
    ret z
    call continue_move
+   MEMCPY player, player_copy, 8
    ret
 
 read_input::
