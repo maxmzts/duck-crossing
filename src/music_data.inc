@@ -35,26 +35,20 @@ music_song0:
 music_menu:
     DB LOW(FREQ_A4),    16, HIGH(FREQ_A4)
     DB LOW(FREQ_E5),    10, HIGH(FREQ_E5)
-    DB MUS_REST,        4
     DB LOW(FREQ_D5),    12, HIGH(FREQ_D5)
     DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
-    DB MUS_REST,        8
 
     DB LOW(FREQ_A4),    16, HIGH(FREQ_A4)
     DB LOW(FREQ_E5),    10, HIGH(FREQ_E5)
-    DB MUS_REST,        4
     DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
     DB LOW(FREQ_A4),    18, HIGH(FREQ_A4)
-    DB MUS_REST
 
     DB LOW(FREQ_G4),    14, HIGH(FREQ_G4)
     DB LOW(FREQ_E4),    12, HIGH(FREQ_E4)
     DB LOW(FREQ_A4),    18, HIGH(FREQ_A4)
-    DB MUS_REST
 
     DB LOW(FREQ_C5),    12, HIGH(FREQ_C5)
     DB LOW(FREQ_D5),    10, HIGH(FREQ_D5)
-    DB MUS_REST,        6
     DB LOW(FREQ_A4),    20, HIGH(FREQ_A4)
     
     DB MUS_END
