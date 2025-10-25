@@ -57,8 +57,9 @@ DEF TILE_SIZE equ $10
 ;; Vblank
 DEF VBLANK_LAYER equ 144
 
-
+;;--------------------
 ;; Constants Sound
+;;--------------------
 ;; Channel 2
 DEF NR10    equ $FF10   ;;Duracion, forma de onda
 
@@ -89,7 +90,7 @@ DEF FREQ_R          equ $06D7   ;; Sonido del movimiento
 DEF FREQ_L          equ $0734   ;; Sonido de tecla en menú
 DEF FREQ_U          equ $05C0   ;; Sonido de tecla en menú
 
-;; SFX Player
+;; SFX Player IDs
 DEF SFX_NONE        equ $FF
 DEF SFX_MOVE_R      equ 0
 DEF SFX_MOVE_L      equ 1

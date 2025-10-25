@@ -1,7 +1,7 @@
 INCLUDE "constants.inc"
 
 SECTION "SFX RAM", WRAM0
-sfx_req:        ds 1
+sfx_req:        ds 1    ;;Petición de SFX, si vale SFX_NONE no hay SFX ha reproducir, sino tiene el ID del sonido
 
 SECTION "SFX Player", ROM0
 
@@ -12,24 +12,25 @@ SECTION "SFX Player", ROM0
 ;;call sfx_update   -> dispara si hay petición
 ;;call sfx_on_move  -> lee pressed_input del jugador y pide SFX
 
-;;Init
+;;Init: POne a sfx_req con el valor de SFX_NONE
 sfx_init::
     ld a, SFX_NONE
     ld [sfx_req], a
 
     ret
 
-;;Play
+;;Play: No dispara el sonido, solo guarda los ID's de los sonidos que se llamarán con el update
 sfx_play::
     ld [sfx_req], a
     ret
 
-;;Update
+;;Update: Se llama en cada frame, si sfx_req es distinto de SFX_NONE guarda el valor en b, lo limpia y entra al dispatcher, este compara el ID y llama al sfx correspondiente
 sfx_update::
     ld a, [sfx_req]
     cp SFX_NONE
     ret z
 
+    ;;Limpia sfx_req y devuelve a "a" para las comparaciones
     ld b, a
     ld a, SFX_NONE
     ld [sfx_req], a
@@ -53,10 +54,12 @@ sfx_update::
 
         ret
 
+    ;;Llama al sonido de movimiento
     .do_r:
         call sfx_move_r
         ret
 
+    ;;Llama al sonido de muerte.
     .do_kill:
         call sfx_kill
         ret
