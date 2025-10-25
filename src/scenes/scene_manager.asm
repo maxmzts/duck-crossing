@@ -1,4 +1,5 @@
 include "constants.inc"
+include "macros.inc"
 
 SECTION "Scene Manager WRAM", WRAM0
 ;; Escena actual
@@ -25,7 +26,7 @@ scene_manager_change_scene::
     ld [w_next_scene], a
     ld a, 1
     ld [w_scene_change_pending], a
-    ret
+    reti
 
 ;; Procesa el cambio de escena si hay uno pendiente
 scene_manager_update::
@@ -75,6 +76,10 @@ scene_manager_update::
     ;; Marcar que ya no hay cambio pendiente
     xor a
     ld [w_scene_change_pending], a
+    ldh [rIF], a
+    ld [w_victory_flag], a
+
+    MEMCPY sprite, player, 8
     
     ;; Encender pantalla
     call lcd_on

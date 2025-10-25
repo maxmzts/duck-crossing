@@ -25,8 +25,8 @@ ENDM
 
 SECTION "Initial Data", ROM0
 ;16x16 obj     Y     X   Tile   Att
-sprite:  DB   100,   64,   $20,   %00000000
-         DB   100,   72,   $22,   %00000000
+sprite:  DB   140,   80,   $20,   %00000000
+         DB   140,   88,   $22,   %00000000
 
 SECTION "Player", OAM
 player: DS 8
