@@ -1,3 +1,5 @@
+include "constants.inc"
+
 SECTION "Level 2 roads", ROM0
 
 roads_level_2:
@@ -13,7 +15,7 @@ DB    119,   15,    3,     0
 level_2_init::
 	;; cargar tilemap
 	ld hl, level2
-   call load_32x32_tilemap
+    call load_32x32_tilemap
 
 	;; Inicializar nivel en el level manager
 	ld hl, roads_level_2
@@ -25,4 +27,15 @@ level_2_init::
 	;; es un nivel
 	call enable_lyc_interrupt
 
+	ret
+
+level_2_check_victory::
+
+	ld a, [w_victory_flag]
+	cp 1
+	ret nz
+	;; cambiar a nivel 2
+	ld a, SCENE_TITLE
+	call scene_manager_change_scene 
+	
 	ret

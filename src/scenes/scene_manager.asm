@@ -49,6 +49,9 @@ scene_manager_update::
     
     cp SCENE_LEVEL_1
     jr z, .init_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .init_level_2
     
     ;; Si no coincide con ninguna, ir a título por defecto
     jr .init_title
@@ -60,6 +63,11 @@ scene_manager_update::
     
 .init_level_1:
     call level_1_init
+    call render_player  ; Renderizar jugador después de cargar nivel
+    jr .finish_change
+
+.init_level_2:
+    call level_2_init
     call render_player  ; Renderizar jugador después de cargar nivel
     jr .finish_change
     
@@ -81,6 +89,9 @@ scene_manager_update_logic::
     
     cp SCENE_LEVEL_1
     jr z, .update_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .update_level_2
     
     ret  ; Escena no reconocida
     
@@ -91,6 +102,15 @@ scene_manager_update_logic::
 .update_level_1:
     call update_player
     call restart_roads_scroll_loop
+    call update_physics
+    call level_1_check_victory
+    ret
+
+.update_level_2:
+    call update_player
+    call restart_roads_scroll_loop
+    call update_physics
+    call level_2_check_victory
     ret
 
 ;; Renderiza la escena actual
@@ -102,6 +122,9 @@ scene_manager_render::
     
     cp SCENE_LEVEL_1
     jr z, .render_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .render_level_2
     
     ret  ; Escena no reconocida
     
@@ -111,6 +134,11 @@ scene_manager_render::
     ret
     
 .render_level_1:
+    call render_player
+    call physics
+    ret
+
+.render_level_2:
     call render_player
     call physics
     ret

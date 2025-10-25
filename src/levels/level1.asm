@@ -29,3 +29,14 @@ level_1_init::
 	;; cuando la escena activa es un nivel
 	call enable_lyc_interrupt
 	ret
+
+level_1_check_victory::
+
+	ld a, [w_victory_flag]
+	cp 1
+	ret nz
+	;; cambiar a nivel 2
+	ld a, SCENE_LEVEL_2
+	call scene_manager_change_scene 
+	
+	ret
