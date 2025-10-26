@@ -13,9 +13,9 @@ DB    119,   15,    3,     0
 .end:
 
 level_2_init::
-	;; Si quieres resetear la posición del jugador
+	;; ✅ OPCIONAL: Si quieres resetear la posición del jugador
 	;; descomenta la siguiente línea:
-	call init_player
+	; call init_player
 	
 	;; cargar tilemap
 	ld hl, level2
@@ -25,12 +25,6 @@ level_2_init::
 	ld hl, roads_level_2
 	ld b, roads_level_2.end - roads_level_2
 	call level_man_init
-	
-	;; Actualizar inmediatamente el puntero de colisión
-	;; con la posición actual del jugador para evitar usar
-	;; el puntero del nivel anterior
-	ld hl, player_copy
-	call get_address_of_tile_being_touched
 
 	;; solo queremos el interrupt de
 	;; LCD activo cuando la escena activa
@@ -40,15 +34,30 @@ level_2_init::
 	ret
 
 level_2_check_victory::
+	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+	ld a, [w_scene_change_pending]
+	cp 1
+	ret z
+	
 	ld a, [w_victory_flag]
 	cp 1
 	ret nz
 	
-	;; Reiniciar el flag de victoria ANTES del cambio
+	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
 	xor a
 	ld [w_victory_flag], a
 	
-	;; Para más adelante si queremos ir a un nivel 3, cambiamos esto:
+	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	ld a, $98
+	ld [tile_colliding_pointer], a
+	xor a
+	ld [tile_colliding_pointer+1], a
+	ld [tile_ID_colliding], a
+	
+
+	call level_man_clear
+
+	;; ✅ CORREGIDO: Si quieres ir a un nivel 3, cambia esto:
 	;; ld a, SCENE_LEVEL_3
 	;; Si quieres volver al título:
 	ld a, SCENE_TITLE

@@ -17,12 +17,27 @@ tile_ID_colliding:: 		DS 1
 SECTION "Gestion de colisiones", ROM0
 
 update_physics::
+	;; ✅ NUEVO: No actualizar física si hay cambio de escena pendiente
+	ld a, [w_scene_change_pending]
+	cp 0
+	ret nz
+	
 	ld hl, player_copy ;; usamos la copia de WRAM para no acceder a la OAM
 	;; actualizar puntero a VRAM
 	call get_address_of_tile_being_touched
 	ret
 
 physics::
+	;; ✅ NUEVO: No ejecutar física si hay cambio de escena pendiente
+	ld a, [w_scene_change_pending]
+	cp 0
+	ret nz
+	
+	;; ✅ NUEVO: No ejecutar física si ya hay victoria detectada
+	ld a, [w_victory_flag]
+	cp 1
+	ret z  ; Si ya hay victoria, no checkear más colisiones
+	
 	;; Tomar puntero a VRAM calculado en el update
 	;; CORRECCIÓN: El orden ahora es correcto
 	ld a, [tile_colliding_pointer]
@@ -62,6 +77,11 @@ check_tile_collision:
 ;;
 ;; INPUT:  HL (TX-TY)
 check_victory_collision:
+	;; ✅ NUEVO: Doble verificación - no checkear si ya hay victoria
+	ld a, [w_victory_flag]
+	cp 1
+	ret z
+	
 	ld a, VIC_TILES
 	ld b, VIC_TILES_SIZE
 	.loop

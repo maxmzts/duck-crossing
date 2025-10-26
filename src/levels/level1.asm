@@ -25,27 +25,36 @@ level_1_init::
 	ld b, roads_level_1.end - roads_level_1
 	call level_man_init
 	
-	;; Actualizar inmediatamente el puntero de colisión
-	;; con la posición actual del jugador para evitar usar
-	;; el puntero del nivel anterior
-	ld hl, player_copy
-	call get_address_of_tile_being_touched
-	
 	;; Solo queremos el interrupt de LCD activo
 	;; cuando la escena activa es un nivel
 	call enable_lyc_interrupt
 	ret
 
 level_1_check_victory::
+	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+	ld a, [w_scene_change_pending]
+	cp 1
+	ret z
+	
 	ld a, [w_victory_flag]
 	cp 1
 	ret nz
 	
-	;; Reiniciar el flag de victoria ANTES del cambio
-	;; para evitar que se procese de nuevo en el siguiente nivel
+	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	;; antes de cualquier otra cosa para evitar doble detección
 	xor a
 	ld [w_victory_flag], a
 	
+	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	;; para evitar que se detecte de nuevo en el mismo frame
+	ld a, $98
+	ld [tile_colliding_pointer], a
+	xor a
+	ld [tile_colliding_pointer+1], a
+	ld [tile_ID_colliding], a
+	
+	call level_man_clear
+
 	;; cambiar a nivel 2
 	ld a, SCENE_LEVEL_2
 	call scene_manager_change_scene 
