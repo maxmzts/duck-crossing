@@ -11,6 +11,9 @@ main::
       
       ;; Actualizar lógica de la escena actual
       call scene_manager_update_logic
+
+      call sfx_update
+      call music_update
       
       ;; Esperar VBlank
       call vblank_with_interrupt
@@ -39,6 +42,16 @@ init::
    
    ;; CARGAR TILES PRIMERO (antes de cualquier escena)
    call load_tiles
+
+   ;;SFX
+   call mute_APU
+   call sound_init
+   call sfx_init
+
+   ;;Musica
+   call music_init
+   ld a, SONG_MENU
+   call music_play_id
    
    ;; Inicializar interrupciones
    call enable_interrupts

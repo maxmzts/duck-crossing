@@ -81,6 +81,12 @@ title_screen_update::
     ret
     
 .start_game:
+    ld a, SFX_MENU
+    call sfx_play
+
+    ld a, SONG_MAIN
+    call music_play_id
+    
     ;; Cambiar a nivel 1
     ld a, SCENE_LEVEL_1
     call scene_manager_change_scene
