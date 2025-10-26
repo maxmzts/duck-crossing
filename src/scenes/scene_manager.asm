@@ -1,4 +1,5 @@
 include "constants.inc"
+include "macros.inc"
 
 SECTION "Scene Manager WRAM", WRAM0
 ;; Escena actual
@@ -25,7 +26,7 @@ scene_manager_change_scene::
     ld [w_next_scene], a
     ld a, 1
     ld [w_scene_change_pending], a
-    ret
+    ret  ; ✅ CORREGIDO: Cambiado de 'reti' a 'ret'
 
 ;; Procesa el cambio de escena si hay uno pendiente
 scene_manager_update::
@@ -49,6 +50,9 @@ scene_manager_update::
     
     cp SCENE_LEVEL_1
     jr z, .init_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .init_level_2
     
     ;; Si no coincide con ninguna, ir a título por defecto
     jr .init_title
@@ -62,11 +66,20 @@ scene_manager_update::
     call level_1_init
     call render_player  ; Renderizar jugador después de cargar nivel
     jr .finish_change
+
+.init_level_2:
+    call level_2_init
+    call render_player  ; Renderizar jugador después de cargar nivel
+    jr .finish_change
     
 .finish_change:
     ;; Marcar que ya no hay cambio pendiente
     xor a
     ld [w_scene_change_pending], a
+    ldh [rIF], a
+    ld [w_victory_flag], a
+
+    MEMCPY sprite, player, 8
     
     ;; Encender pantalla
     call lcd_on
@@ -74,6 +87,11 @@ scene_manager_update::
 
 ;; Actualiza la lógica de la escena actual
 scene_manager_update_logic::
+    ;; ✅ NUEVO: No actualizar lógica si hay cambio pendiente
+    ld a, [w_scene_change_pending]
+    cp 0
+    ret nz  ; Si hay cambio pendiente, no hacer nada
+    
     ld a, [w_current_scene]
     
     cp SCENE_TITLE
@@ -81,6 +99,9 @@ scene_manager_update_logic::
     
     cp SCENE_LEVEL_1
     jr z, .update_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .update_level_2
     
     ret  ; Escena no reconocida
     
@@ -91,10 +112,24 @@ scene_manager_update_logic::
 .update_level_1:
     call update_player
     call restart_roads_scroll_loop
+    call update_physics
+    call level_1_check_victory
+    ret
+
+.update_level_2:
+    call update_player
+    call restart_roads_scroll_loop
+    call update_physics
+    call level_2_check_victory
     ret
 
 ;; Renderiza la escena actual
 scene_manager_render::
+    ;; ✅ NUEVO: No renderizar si hay cambio pendiente
+    ld a, [w_scene_change_pending]
+    cp 0
+    ret nz  ; Si hay cambio pendiente, no renderizar
+    
     ld a, [w_current_scene]
     
     cp SCENE_TITLE
@@ -102,6 +137,9 @@ scene_manager_render::
     
     cp SCENE_LEVEL_1
     jr z, .render_level_1
+
+    cp SCENE_LEVEL_2
+    jr z, .render_level_2
     
     ret  ; Escena no reconocida
     
@@ -111,6 +149,11 @@ scene_manager_render::
     ret
     
 .render_level_1:
+    call render_player
+    call physics
+    ret
+
+.render_level_2:
     call render_player
     call physics
     ret

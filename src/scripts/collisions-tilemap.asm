@@ -46,6 +46,8 @@ get_address_of_tile_being_touched::
 	ld c, a
 	ld a, e
 	call check_road_tile
+	cp 0
+	jr z, .update_pointer
 	call get_scroll_tile_offset
 	push de 
 	call fix_tile_offset
@@ -54,11 +56,17 @@ get_address_of_tile_being_touched::
 
 
 	;; 3. Calculate the VRAM address using TX and TY
+	.update_pointer
 	ld l, e
 	ld a, d
 	call calculate_address_from_tx_and_ty
-	ld a, [hl]
-	ld [tile_ID_colliding], a 
+	;; hl tiene la posicion de VRAM
+
+	;; actualizar apuntador 
+	ld a, h
+	ld [tile_colliding_pointer], a 
+	ld a, l
+	ld [tile_colliding_pointer+1], a 
 	ret
 
 ;; INPUT:  A (TY),  HL (road tiles array), C (number of roads)
@@ -78,9 +86,7 @@ check_road_tile:
 	jr nz, .loop
 
 	;; no road --> skip routine
-
-	pop af   ;; delete ret to get_address_of_tile_being_touched
-	pop af   ;; delete ret to physics
+	ld a, 0
 	ret
 
 

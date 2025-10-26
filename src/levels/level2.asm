@@ -1,3 +1,5 @@
+include "constants.inc"
+
 SECTION "Level 2 roads", ROM0
 
 roads_level_2:
@@ -11,9 +13,13 @@ DB    119,   15,    3,     0
 .end:
 
 level_2_init::
+	;; ✅ OPCIONAL: Si quieres resetear la posición del jugador
+	;; descomenta la siguiente línea:
+	; call init_player
+	
 	;; cargar tilemap
 	ld hl, level2
-   call load_32x32_tilemap
+	call load_32x32_tilemap
 
 	;; Inicializar nivel en el level manager
 	ld hl, roads_level_2
@@ -25,4 +31,36 @@ level_2_init::
 	;; es un nivel
 	call enable_lyc_interrupt
 
+	ret
+
+level_2_check_victory::
+	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+	ld a, [w_scene_change_pending]
+	cp 1
+	ret z
+	
+	ld a, [w_victory_flag]
+	cp 1
+	ret nz
+	
+	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	xor a
+	ld [w_victory_flag], a
+	
+	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	ld a, $98
+	ld [tile_colliding_pointer], a
+	xor a
+	ld [tile_colliding_pointer+1], a
+	ld [tile_ID_colliding], a
+	
+
+	call level_man_clear
+
+	;; ✅ CORREGIDO: Si quieres ir a un nivel 3, cambia esto:
+	;; ld a, SCENE_LEVEL_3
+	;; Si quieres volver al título:
+	ld a, SCENE_TITLE
+	call scene_manager_change_scene 
+	
 	ret

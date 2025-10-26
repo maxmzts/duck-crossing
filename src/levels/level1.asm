@@ -29,3 +29,34 @@ level_1_init::
 	;; cuando la escena activa es un nivel
 	call enable_lyc_interrupt
 	ret
+
+level_1_check_victory::
+	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+	ld a, [w_scene_change_pending]
+	cp 1
+	ret z
+	
+	ld a, [w_victory_flag]
+	cp 1
+	ret nz
+	
+	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	;; antes de cualquier otra cosa para evitar doble detección
+	xor a
+	ld [w_victory_flag], a
+	
+	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	;; para evitar que se detecte de nuevo en el mismo frame
+	ld a, $98
+	ld [tile_colliding_pointer], a
+	xor a
+	ld [tile_colliding_pointer+1], a
+	ld [tile_ID_colliding], a
+	
+	call level_man_clear
+
+	;; cambiar a nivel 2
+	ld a, SCENE_LEVEL_2
+	call scene_manager_change_scene 
+	
+	ret
