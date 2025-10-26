@@ -118,37 +118,22 @@ get_scroll_tile_offset:
 ;; evitar que se compruebe la colisión en la línea 
 ;; de abajo. Pasos:
 ;;	
-;; 1.   Se calcula los tiles necesarios para hacer overflow
-;; 2.   Se resta los tiles de scroll con lo anterior
+;; 1.   Se calcula la suma de TX y los tiles de scroll 
+;; 2.   Se resta la longitud de una linea en tiles (31)
+;;      al resultado de lo anterior.
 ;; 3.A  Si da negativo es que no se hace overflow
 ;; 3.B  Si da positivo es que se hace overflow y se tiene
-;;      que restar la diferencia
+;;      que usar la diferencia
 ;;
-;; INPUT:  D (TX), A (scroll tile offset)
+;; INPUT:  D (TX), A (scroll tile offset (TS) )
 ;; OUTPUT: A (fixed scroll tile offset)
 fix_tile_offset:
-	push af     ; guardar TScroll
-	ld a, $1F   ; End of X line
-	sub d       ; Final - TX = tiles to overflow (TTO)
-	ld b, a     ; B = TTO
-
-	;; comprobar si se produce overflow
-	pop af 		; recuperar TScroll
-	ld c, a     ; C = TScroll 
-	sub b       ; TScroll - TTO = TDiff
-	ld b, a     ; B = TDiff  (TTO ya no hace falta)
-	ld a, d     ; A = TX
-	jr c, .skip
-	
-	;; si no carry, se produce overflow, se debe restar la diferencia
-	sub b   	; TX - TDiff
+	add d        ;; TX + TS
+	ld c, a 	 ;; guardar resultado
+	sub $20		 ;; END of line
+	ret nc     
+	ld a, c 	 ;; usar resultado guardado
 	ret
-
-	;; si hay carry, no se produce overflow, se suma TScroll normalmente
-	.skip:
-	add c		; TX + TScroll
-	ret
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
