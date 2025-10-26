@@ -1,36 +1,93 @@
-DEF PLAYER_CENTER_Y EQU 9 
-DEF PLAYER_CENTER_X EQU 8
-DEF CAR_CENTER_Y EQU 12 
-DEF CAR_CENTER_X EQU 8 
-DEF Y_SIZE EQU 15
-DEF X_SIZE EQU 16
+;; IDs de los vehiculos
+DEF CAR_TILES 		EQU $04
+DEF CAR_TILES_SIZE 	EQU 2
 
+DEF BUS_TILES 		EQU $04 ;; cambiar
+DEF BUS_TILES_SIZE 	EQU 2
+
+
+;; ID de victoria
+DEF VIC_TILES 		EQU $0A
+DEF VIC_TILES_SIZE 	EQU 4
 
 SECTION "Variables colisiones", WRAM0
-object_1_center: 		DS 1 
-object_2_center: 		DS 1
-min_size_btw_centers:	DS 1
-is_colliding:			DS 1 ; 0 = false, 1 = true
-
-tile_ID_colliding:: DS 1
+tile_colliding_pointer:: 	DS 2
+tile_ID_colliding:: 		DS 1
 
 SECTION "Gestion de colisiones", ROM0
 
-physics::
-	ld hl, player
+update_physics::
+	;; ✅ NUEVO: No actualizar física si hay cambio de escena pendiente
+	ld a, [w_scene_change_pending]
+	cp 0
+	ret nz
+	
+	ld hl, player_copy ;; usamos la copia de WRAM para no acceder a la OAM
+	;; actualizar puntero a VRAM
 	call get_address_of_tile_being_touched
-	;; hl now has the tile address on a road
+	ret
 
-	;; check if the tile is a car tile
-	ld a, $04
-	cp [hl]
-	call z, kill_player
-	ld a, $05
-	cp [hl]
-	call z, kill_player
+physics::
+	;; ✅ NUEVO: No ejecutar física si hay cambio de escena pendiente
+	ld a, [w_scene_change_pending]
+	cp 0
+	ret nz
+	
+	;; ✅ NUEVO: No ejecutar física si ya hay victoria detectada
+	ld a, [w_victory_flag]
+	cp 1
+	ret z  ; Si ya hay victoria, no checkear más colisiones
+	
+	;; Tomar puntero a VRAM calculado en el update
+	;; CORRECCIÓN: El orden ahora es correcto
+	ld a, [tile_colliding_pointer]
+	ld h, a                            ; tile_colliding_pointer tiene el byte alto (H)
+	ld a, [tile_colliding_pointer+1]
+	ld l, a                            ; tile_colliding_pointer+1 tiene el byte bajo (L)
+
+	ld a, [hl]
+	ld [tile_ID_colliding], a
+
+	ld a, CAR_TILES
+	ld b, CAR_TILES_SIZE
+	call check_tile_collision
+
+	call check_victory_collision
 	
 	ret
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Función genérica para comprobar si el jugador ha 
+;; colisionado con un vehículo. Debe proporcionarse
+;; el primer ID del vehiculo y la cantidad de tiles
+;;
+;; INPUT:  HL (TX-TY), A (Start ID), B (ID amount)
+check_tile_collision:
+		cp [hl]
+		call z, kill_player
+		inc a
+		dec b
+	jr nz, check_tile_collision
+	ret
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Como la anterior pero para la victoria en concreto
+;;
+;; INPUT:  HL (TX-TY)
+check_victory_collision:
+	;; ✅ NUEVO: Doble verificación - no checkear si ya hay victoria
+	ld a, [w_victory_flag]
+	cp 1
+	ret z
 	
+	ld a, VIC_TILES
+	ld b, VIC_TILES_SIZE
+	.loop
+		cp [hl]
+		call z, level_man_set_victory
+		inc a
+		dec b
+	jr nz, .loop
+	ret

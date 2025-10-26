@@ -6,14 +6,13 @@ SECTION FRAGMENT "Utils", ROM0
 lcd_on::
 	ld hl, rLCDC
 	set 7, [hl]
-	ret
+	reti
 
 lcd_off::
 	di
 	call vblank
 	ld hl, rLCDC
 	res 7, [hl]
-	ei
 	ret
 
 vblank::

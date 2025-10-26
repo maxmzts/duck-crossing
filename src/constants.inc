@@ -65,6 +65,9 @@ DEF VBLANK_LAYER equ 144
 DEF SCENE_TITLE     equ 0
 DEF SCENE_LEVEL_1   equ 1
 DEF SCENE_GAME_OVER equ 2
+DEF SCENE_LEVEL_2   equ 3
+DEF SCENE_LEVEL_3   equ 4
+
 
 ;; Button bits (para detectar A presionado)
 DEF A_PRESSED       equ 0
