@@ -1,4 +1,5 @@
 include "constants.inc"
+include "macros.inc"
 
 SECTION "Title Screen WRAM", WRAM0
 w_title_input_cooldown:: DS 1  ; Cooldown para evitar inputs dobles
@@ -21,6 +22,11 @@ title_screen_init::
     ld [hl], a   ; Atributos = 0
     
     ;; Cargar tilemap de título
+    MEMCPY title_tileset, $8000, 256
+    MEMCPY title_tileset + 256, $8000 + $100, 256
+    MEMCPY title_tileset + 512, $8000 + $200, 256
+    MEMCPY title_tileset + 768, $8000 + $300, 256
+    MEMCPY title_tileset + 1024, $8000 + $400, 256
     ld hl, title_tilemap
     call load_32x32_tilemap
     

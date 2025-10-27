@@ -119,6 +119,8 @@ level_man_init::
 
 	xor a
 	ld [w_victory_flag], a
+
+	MEMCPY Tileset1, $8000, Tileset1.end - Tileset1
 	ret
 
 level_man_clear::
