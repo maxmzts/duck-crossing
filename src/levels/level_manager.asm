@@ -79,9 +79,10 @@ w_velocity_frame:: DS 1
 
 ;; flag que marca la victoria del nivel
 ;; 0 = jugando   ,  1 = victoria
+w_level_man_variables_end:
 w_victory_flag:: DS 1
 
-w_level_man_variables_end:
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -121,7 +122,7 @@ level_man_init::
 	ret
 
 level_man_clear::
-    MEMSET w_level_man_variables, 0, w_level_man_variables - w_level_man_variables_end 
+    MEMSET w_level_man_variables, 0,  w_level_man_variables_end - w_level_man_variables 
     ret
 
 level_man_set_victory::
