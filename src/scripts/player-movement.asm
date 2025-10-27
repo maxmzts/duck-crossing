@@ -51,6 +51,7 @@ init_player::
 
    ;; cargar datos iniciales del jugador a la OAM
    MEMCPY sprite, player, 8 
+   MEMCPY player, player_copy, 8 
 
    ;; inicializar variables
    xor a
@@ -62,6 +63,10 @@ init_player::
    ld [previous_input], a
    ld [current_input], a
    ld [pressed_input], a
+   ret
+
+destroy_player::
+   MEMSET player, 0, 8 
    ret
 
 update_player::

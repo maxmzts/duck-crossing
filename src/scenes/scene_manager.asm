@@ -78,8 +78,6 @@ scene_manager_update::
     ld [w_scene_change_pending], a
     ldh [rIF], a
     ld [w_victory_flag], a
-
-    MEMCPY sprite, player, 8
     
     ;; Encender pantalla
     call lcd_on

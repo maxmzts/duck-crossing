@@ -79,9 +79,9 @@ w_velocity_frame:: DS 1
 
 ;; flag que marca la victoria del nivel
 ;; 0 = jugando   ,  1 = victoria
-w_level_man_variables_end:
-w_victory_flag:: DS 1
 
+w_victory_flag:: DS 1
+w_level_man_variables_end:
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

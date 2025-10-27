@@ -13,9 +13,7 @@ DB    119,   15,    3,     0
 .end:
 
 level_2_init::
-	;; ✅ OPCIONAL: Si quieres resetear la posición del jugador
-	;; descomenta la siguiente línea:
-	; call init_player
+	call init_player
 	
 	ld a, SONG_MAIN
     call music_play_id
@@ -47,22 +45,20 @@ level_2_check_victory::
 	ret nz
 	
 	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	;; antes de cualquier otra cosa para evitar doble detección
 	xor a
 	ld [w_victory_flag], a
 	
 	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	;; para evitar que se detecte de nuevo en el mismo frame
 	ld a, $98
 	ld [tile_colliding_pointer], a
 	xor a
 	ld [tile_colliding_pointer+1], a
 	ld [tile_ID_colliding], a
 	
-
 	call level_man_clear
-
-	;; ✅ CORREGIDO: Si quieres ir a un nivel 3, cambia esto:
-	;; ld a, SCENE_LEVEL_3
-	;; Si quieres volver al título:
+	;; cambiar a nivel 2
 	ld a, SCENE_TITLE
 	call scene_manager_change_scene 
 	
