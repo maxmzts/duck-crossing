@@ -6,14 +6,13 @@ SECTION FRAGMENT "Utils", ROM0
 lcd_on::
 	ld hl, rLCDC
 	set 7, [hl]
-	ret
+	reti
 
 lcd_off::
 	di
 	call vblank
 	ld hl, rLCDC
 	res 7, [hl]
-	ei
 	ret
 
 vblank::
@@ -193,3 +192,21 @@ fade_in_black::
 	ld [rBGP], a
 
 	ret
+
+mute_APU::
+	xor a
+	ld [NR52], a
+	ret
+
+sound_init::
+	ld a, $80
+	ld [NR52], a
+
+	ld a, $77
+	ld [NR50], a
+
+	ld a, $FF
+	ld [NR51], a
+
+	ret
+	

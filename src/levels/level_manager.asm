@@ -1,4 +1,5 @@
 include "constants.inc"
+include "macros.inc"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DOCUMENTACION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,6 +59,7 @@ include "constants.inc"
 
 SECTION "Level Manager Data", WRAM0
 
+w_level_man_variables:
 ;; puntero para iterar sobre las carreteras
 w_next_road_pointer:: DS 2
 
@@ -77,7 +79,10 @@ w_velocity_frame:: DS 1
 
 ;; flag que marca la victoria del nivel
 ;; 0 = jugando   ,  1 = victoria
+
 w_victory_flag:: DS 1
+w_level_man_variables_end:
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -115,6 +120,10 @@ level_man_init::
 	xor a
 	ld [w_victory_flag], a
 	ret
+
+level_man_clear::
+    MEMSET w_level_man_variables, 0,  w_level_man_variables_end - w_level_man_variables 
+    ret
 
 level_man_set_victory::
 	ld a, 1

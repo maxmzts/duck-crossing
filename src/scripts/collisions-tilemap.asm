@@ -46,6 +46,8 @@ get_address_of_tile_being_touched::
 	ld c, a
 	ld a, e
 	call check_road_tile
+	cp 0
+	jr z, .update_pointer
 	call get_scroll_tile_offset
 	push de 
 	call fix_tile_offset
@@ -54,11 +56,17 @@ get_address_of_tile_being_touched::
 
 
 	;; 3. Calculate the VRAM address using TX and TY
+	.update_pointer
 	ld l, e
 	ld a, d
 	call calculate_address_from_tx_and_ty
-	ld a, [hl]
-	ld [tile_ID_colliding], a 
+	;; hl tiene la posicion de VRAM
+
+	;; actualizar apuntador 
+	ld a, h
+	ld [tile_colliding_pointer], a 
+	ld a, l
+	ld [tile_colliding_pointer+1], a 
 	ret
 
 ;; INPUT:  A (TY),  HL (road tiles array), C (number of roads)
@@ -78,9 +86,7 @@ check_road_tile:
 	jr nz, .loop
 
 	;; no road --> skip routine
-
-	pop af   ;; delete ret to get_address_of_tile_being_touched
-	pop af   ;; delete ret to physics
+	ld a, 0
 	ret
 
 
@@ -112,37 +118,22 @@ get_scroll_tile_offset:
 ;; evitar que se compruebe la colisión en la línea 
 ;; de abajo. Pasos:
 ;;	
-;; 1.   Se calcula los tiles necesarios para hacer overflow
-;; 2.   Se resta los tiles de scroll con lo anterior
+;; 1.   Se calcula la suma de TX y los tiles de scroll 
+;; 2.   Se resta la longitud de una linea en tiles (31)
+;;      al resultado de lo anterior.
 ;; 3.A  Si da negativo es que no se hace overflow
 ;; 3.B  Si da positivo es que se hace overflow y se tiene
-;;      que restar la diferencia
+;;      que usar la diferencia
 ;;
-;; INPUT:  D (TX), A (scroll tile offset)
+;; INPUT:  D (TX), A (scroll tile offset (TS) )
 ;; OUTPUT: A (fixed scroll tile offset)
 fix_tile_offset:
-	push af     ; guardar TScroll
-	ld a, $1F   ; End of X line
-	sub d       ; Final - TX = tiles to overflow (TTO)
-	ld b, a     ; B = TTO
-
-	;; comprobar si se produce overflow
-	pop af 		; recuperar TScroll
-	ld c, a     ; C = TScroll 
-	sub b       ; TScroll - TTO = TDiff
-	ld b, a     ; B = TDiff  (TTO ya no hace falta)
-	ld a, d     ; A = TX
-	jr c, .skip
-	
-	;; si no carry, se produce overflow, se debe restar la diferencia
-	sub b   	; TX - TDiff
+	add d        ;; TX + TS
+	ld c, a 	 ;; guardar resultado
+	sub $20		 ;; END of line
+	ret nc     
+	ld a, c 	 ;; usar resultado guardado
 	ret
-
-	;; si hay carry, no se produce overflow, se suma TScroll normalmente
-	.skip:
-	add c		; TX + TScroll
-	ret
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

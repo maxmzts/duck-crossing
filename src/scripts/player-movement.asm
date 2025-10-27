@@ -25,11 +25,14 @@ ENDM
 
 SECTION "Initial Data", ROM0
 ;16x16 obj     Y     X   Tile   Att
-sprite:  DB   100,   64,   $20,   %00000000
-         DB   100,   72,   $22,   %00000000
+sprite:  DB   140,   80,   $20,   %00000000
+         DB   140,   88,   $22,   %00000000
 
 SECTION "Player", OAM
 player: DS 8
+
+SECTION "Player copy", WRAM0
+player_copy: DS 8
 
 SECTION "Player Variables", WRAM0
 
@@ -44,10 +47,11 @@ SECTION "Player Movement", ROM0
 
 init_player::
    ;; load sprite tiles
-   MEMCPY duck_player, $8000 + ($20 * $10), 64
+   MEMCPY duck_player_down, $8000 + ($20 * $10), 64
 
    ;; cargar datos iniciales del jugador a la OAM
    MEMCPY sprite, player, 8 
+   MEMCPY player, player_copy, 8 
 
    ;; inicializar variables
    xor a
@@ -61,11 +65,15 @@ init_player::
    ld [pressed_input], a
    ret
 
+destroy_player::
+   MEMSET player, 0, 8 
+   ret
+
 update_player::
-   ;; check input lock
+   ;; check dead
    ld a, [state]
    cp 0
-   ret nz
+   jp nz, read_restart
 
 	;; check input lock
 	ld a, [input_lock]
@@ -83,7 +91,9 @@ update_player::
 	ret
 
 render_player::
-   ;; check input lock
+   call update_player_tiles
+
+   ;; check dead
    ld a, [state]
    cp 0
    ret nz
@@ -99,6 +109,7 @@ render_player::
    and %00000001 ;; dará 0 cuando el numero sea par
    ret z
    call continue_move
+   MEMCPY player, player_copy, 8
    ret
 
 read_input::
@@ -154,25 +165,41 @@ move:
 
    ;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right_pad_pressed:
-      START_MOVE 0
-   ret
+   push af
+   ld a, SFX_MOVE_R
+   call sfx_play
+   pop af
+    START_MOVE 0
+    ret
 
-   .left_pad_pressed:
-      START_MOVE 1
-   ret 
+.left_pad_pressed:
+   push af
+   ld a, SFX_MOVE_L
+   call sfx_play
+   pop af
+    START_MOVE 1
+    ret 
 
-   .up_pad_pressed:
-      START_MOVE 2
-   ret
+.up_pad_pressed:
+   push af
+   ld a, SFX_MOVE_U
+   call sfx_play
+   pop af
+    START_MOVE 2
+    ret
 
-   .down_pad_pressed:
-      START_MOVE 3
-   ret
+.down_pad_pressed:
+   push af
+   ld a, SFX_MOVE_D
+   call sfx_play
+   pop af
+    START_MOVE 3
+    ret
 
 continue_move:
-	ld a, [move_dir]
+    ld a, [move_dir]
 
-	cp 0
+    cp 0
    jr z, .right
 
    cp 1
@@ -185,8 +212,7 @@ continue_move:
    jr z, .down
    ret
 
-
-   ;; ACTUALIZAR POSICIÓN DEL JUGADOR
+;; ACTUALIZAR POSICIÓN DEL JUGADOR
    .right:
       MOVE_SPRITE 1,1
    ret
@@ -203,7 +229,74 @@ continue_move:
       MOVE_SPRITE 1,0
    ret
 
+update_player_tiles::
+    ld a, [move_dir]
+    cp 0
+    jr z, .right
+    cp 1
+    jr z, .left
+    cp 2
+    jr z, .up
+    cp 3
+    jr z, .down
+    ret
+
+.right:
+    MEMCPY duck_player_right, $8000 + ($20 * $10), 64
+    jr .done
+
+.left:
+    MEMCPY duck_player_left, $8000 + ($20 * $10), 64
+    jr .done
+
+.up:
+    MEMCPY duck_player_up, $8000 + ($20 * $10), 64
+    jr .done
+
+.down:
+    MEMCPY duck_player_down, $8000 + ($20 * $10), 64
+
+.done:
+    ret
+
+read_restart:
+   ;; Verificar input de botones (A, B, Start, Select)
+   ld a, SELECT_BUTTONS
+   ld [rJOYP], a
+   ld a, [rJOYP]
+   ld a, [rJOYP]  ; Lectura doble para estabilidad
+
+   ;; Invertir bits (0 = presionado)
+   cpl
+   and $0F
+
+   ;; Si algún botón está presionado, iniciar nivel
+   cp 0
+   ;; reiniciar escena si se ha pulsado la A
+   call nz, restart
+
+   ret
+
+restart:
+   call level_man_clear
+   ld a, [w_current_scene]
+   call scene_manager_change_scene
+   ret
+
 kill_player:
+   ;; retornar si ya está muerto
+   ld a, [state]
+   cp 1
+   ret z
+
+   push af
+   ld a, SFX_KILL
+   call sfx_play
+   pop af
+
+   ld a, SONG_DEATH
+   call music_play_id
+
    ld a, 1
    ld [state], a
    ret
