@@ -4,26 +4,26 @@ include "macros.inc"
 SECTION "Main Loop", ROM0[$150]
 main::
    call init
-   
+
    .game_loop:
       ;; Procesar cambios de escena si hay pendientes
       call scene_manager_update
-      
+
       ;; Actualizar lógica de la escena actual
       call scene_manager_update_logic
 
       call sfx_update
       call music_update
-      
+
       ;; Esperar VBlank
       call vblank_with_interrupt
       call reset_vblank_flag
-      
+
       ;; Renderizar la escena actual
       call scene_manager_render
-      
+
    jr .game_loop
-   
+
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)
 
@@ -33,13 +33,13 @@ init::
    call clear_background
    call clear_oam
    call enable_obj
-   
+
    ;; Definir paletas 
    ld a, DEFAULT_PALETTE
    ld [rBGP], a
    ld a, %11100001
    ld [rOBJP0], a
-   
+
    ;; CARGAR TILES PRIMERO (antes de cualquier escena)
    call load_tiles
 
@@ -52,17 +52,20 @@ init::
    call music_init
    ld a, SONG_MENU
    call music_play_id
-   
+
    ;; Inicializar interrupciones
    call enable_interrupts
-   
+
+
    ;; INICIALIZAR SCENE MANAGER CON PANTALLA DE TÍTULO
    ld a, SCENE_TITLE
-   call scene_manager_init
-   
+   call scene_manager_change_scene
+
+   call lcd_on
    ;; Forzar primer cambio de escena a título
    call scene_manager_update
-   
+   call lcd_off
+
    call lcd_on
    reti
 
