@@ -289,6 +289,8 @@ kill_player:
    cp 1
    ret z
 
+   MEMCPY duck_player_dead_up, $8000 + ($20 * $10), 64
+
    push af
    ld a, SFX_KILL
    call sfx_play
