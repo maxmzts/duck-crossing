@@ -141,5 +141,6 @@ DEF SONG_MENU       equ 1
 DEF SONG_DEATH      equ 2
 DEF SONG_VICTORY    equ 3
 DEF MUS_END         equ $FF     ;; Fin de la canción, loop
-DEF MUS_REST        equ $FE   ;; Silencio
+DEF MUS_REST        equ $FE     ;; Silencio
+DEF MUS_NOISE       equ $FD     ;; GOlpe de ruido
 

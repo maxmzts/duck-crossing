@@ -17,6 +17,9 @@ level_2_init::
 	;; descomenta la siguiente línea:
 	; call init_player
 	
+	ld a, SONG_MAIN
+    call music_play_id
+	
 	;; cargar tilemap
 	ld hl, level2
 	call load_32x32_tilemap

@@ -23,10 +23,10 @@ sfx_noise_click::
     xor a
     ld [NR41], a        ;;Todo a 0
 
-    ld a, %10000010
+    ld a, %01100001
     ld [NR42], a        ;;Max vol, dec y per 2
 
-    ld a, %00100010
+    ld a, %01010001
     ld [NR43], a        ;;0010 -> Frec, 0 -> LSFR, 010 -> reloj
 
     ld a, %10000000

@@ -15,6 +15,9 @@ DB    200,    0,    0,     0
 level_1_init::
 	;; Inicializar jugador (tiles y posición)
 	call init_player
+
+	ld a, SONG_MAIN
+    call music_play_id
 	
 	;; cargar tilemap
 	ld hl, level1

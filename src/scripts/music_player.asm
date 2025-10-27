@@ -106,13 +106,26 @@ music_update::
     
     .chk_rest:
         cp MUS_REST
-        jr nz, .note_event
+        jr nz, .chk_noise
 
         ;;Lee la duración y actualzia el puntero, sino salta a leer la nota
         ld a, [hl]
         inc hl
         ld [mus_dur], a
 
+        jr .store_ptr
+
+    .chk_noise:
+        cp MUS_NOISE
+        jr nz, .note_event
+
+        ld a, [hl]
+        inc hl
+        push hl
+        call sfx_noise_click
+        pop hl
+        ld a, 1
+        ld [mus_dur], a
         jr .store_ptr
 
     .note_event:
