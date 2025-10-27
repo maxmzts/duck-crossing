@@ -29,8 +29,6 @@ press_a_show::
     cp 1
     ret z  ; Ya está visible, no hacer nada
     
-    ;; Apagar LCD para escribir en VRAM de forma segura
-    call lcd_off
     
     ;; Calcular dirección base en VRAM
     ;; Fila 0 = $9800 + (0 * 32) = $9800
@@ -64,9 +62,6 @@ press_a_show::
     ;; Marcar como visible
     ld a, 1
     ld [w_press_a_visible], a
-    
-    ;; Encender LCD
-    call lcd_on
     ret
 
 ;; Oculta el mensaje "Press A" sin apagar el LCD

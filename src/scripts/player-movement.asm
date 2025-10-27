@@ -95,8 +95,6 @@ update_player::
    ret
 
 render_player::
-   call update_player_tiles
-
    ;; check dead
    ld a, [state]
    cp 0
@@ -106,6 +104,8 @@ render_player::
    ld a, [input_lock]
    or a
    ret z
+
+   call update_player_tiles
 
    ld hl, input_lock
    dec [hl]   
@@ -295,6 +295,8 @@ kill_player:
    ld a, [state]
    cp 1
    ret z
+
+   call vblank
 
    MEMCPY duck_player_dead_up, $8000 + ($20 * $10), 64
 
