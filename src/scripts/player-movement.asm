@@ -65,10 +65,10 @@ init_player::
    ret
 
 update_player::
-   ;; check input lock
+   ;; check dead
    ld a, [state]
    cp 0
-   ret nz
+   jp nz, read_restart
 
 	;; check input lock
 	ld a, [input_lock]
@@ -254,7 +254,36 @@ update_player_tiles::
 .done:
     ret
 
+read_restart:
+   ;; Verificar input de botones (A, B, Start, Select)
+   ld a, SELECT_BUTTONS
+   ld [rJOYP], a
+   ld a, [rJOYP]
+   ld a, [rJOYP]  ; Lectura doble para estabilidad
+
+   ;; Invertir bits (0 = presionado)
+   cpl
+   and $0F
+
+   ;; Si algún botón está presionado, iniciar nivel
+   cp 0
+   ;; reiniciar escena si se ha pulsado la A
+   call nz, restart
+
+   ret
+
+restart:
+   call level_man_clear
+   ld a, [w_current_scene]
+   call scene_manager_change_scene
+   ret
+
 kill_player:
+   ;; retornar si ya está muerto
+   ld a, [state]
+   cp 1
+   ret z
+
    push af
    ld a, SFX_KILL
    call sfx_play
