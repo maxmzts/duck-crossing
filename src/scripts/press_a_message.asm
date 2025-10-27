@@ -77,7 +77,7 @@ press_a_hide::
     ld [w_press_a_visible], a
     ret
 
-;; Versión que limpia VRAM (llamar solo cuando LCD esté apagado)
+;; llamar solo cuando LCD esté apagado
 press_a_clear_vram::
     ;; Calcular dirección base en VRAM
     ld de, $9800 + 6  ; Primera fila del mensaje

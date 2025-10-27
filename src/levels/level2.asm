@@ -35,7 +35,7 @@ level_2_init::
 	ret
 
 level_2_check_victory::
-	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+	;; Si ya hay cambio de escena pendiente, no hacer nada
 	ld a, [w_scene_change_pending]
 	cp 1
 	ret z
@@ -44,12 +44,12 @@ level_2_check_victory::
 	cp 1
 	ret nz
 	
-	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	;;Reiniciar el flag de victoria INMEDIATAMENTE
 	;; antes de cualquier otra cosa para evitar doble detección
 	xor a
 	ld [w_victory_flag], a
 	
-	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	;;Reiniciar el puntero de colisión a un valor seguro
 	;; para evitar que se detecte de nuevo en el mismo frame
 	ld a, $98
 	ld [tile_colliding_pointer], a
