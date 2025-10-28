@@ -1,7 +1,8 @@
 ;; IDs de los vehiculos
 DEF CAR_TILES 			EQU $04
-DEF CAR_SLOW_TILES		EQU	$11
-DEF CAR_NORMAL_TILES	EQU	$13
+DEF CAR_FAST_TILES		EQU	$11
+DEF CAR_SLOW_TILES		EQU	$13
+DEF CAR_NORMAL_TILES	EQU	$0F
 DEF CAR_TILES_SIZE 		EQU 2
 
 DEF BUS_TILES 		EQU $04 ;; cambiar
@@ -19,7 +20,7 @@ tile_ID_colliding:: 		DS 1
 SECTION "Tiles de vehiculos", ROM0
 vehicle_ranges::
 	DB CAR_TILES, 		CAR_TILES_SIZE		;;Coche rápido
-	DB CAR_SLOW_TILES,	CAR_TILES_SIZE		;;Coche lento
+	DB CAR_FAST_TILES,	CAR_TILES_SIZE		;;Coche lento
 	DB $FF, $00 
 
 SECTION "Gestion de colisiones", ROM0
@@ -57,6 +58,10 @@ physics::
 	ld [tile_ID_colliding], a
 
 	ld a, CAR_TILES
+	ld b, CAR_TILES_SIZE
+	call check_tile_collision
+
+	ld a, CAR_FAST_TILES
 	ld b, CAR_TILES_SIZE
 	call check_tile_collision
 
