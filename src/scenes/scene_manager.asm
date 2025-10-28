@@ -123,7 +123,7 @@ scene_manager_update_logic::
 
 ;; Renderiza la escena actual
 scene_manager_render::
-    ;; ✅ NUEVO: No renderizar si hay cambio pendiente
+    ;; No renderizar si hay cambio pendiente
     ld a, [w_scene_change_pending]
     cp 0
     ret nz  ; Si hay cambio pendiente, no renderizar
@@ -143,7 +143,6 @@ scene_manager_render::
     
 .render_title:
     ;; La pantalla de título es estática, no renderiza nada
-    ;; Importante: NO llamar a render_player aquí
     ret
     
 .render_level_1:

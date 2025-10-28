@@ -25,7 +25,7 @@ vehicle_ranges::
 SECTION "Gestion de colisiones", ROM0
 
 update_physics::
-	;; ✅ NUEVO: No actualizar física si hay cambio de escena pendiente
+	;; No actualizar física si hay cambio de escena pendiente
 	ld a, [w_scene_change_pending]
 	cp 0
 	ret nz
@@ -36,18 +36,17 @@ update_physics::
 	ret
 
 physics::
-	;; ✅ NUEVO: No ejecutar física si hay cambio de escena pendiente
+	;; No ejecutar física si hay cambio de escena pendiente
 	ld a, [w_scene_change_pending]
 	cp 0
 	ret nz
 	
-	;; ✅ NUEVO: No ejecutar física si ya hay victoria detectada
+	;; No ejecutar física si ya hay victoria detectada
 	ld a, [w_victory_flag]
 	cp 1
 	ret z  ; Si ya hay victoria, no checkear más colisiones
 	
 	;; Tomar puntero a VRAM calculado en el update
-	;; CORRECCIÓN: El orden ahora es correcto
 	ld a, [tile_colliding_pointer]
 	ld h, a                            ; tile_colliding_pointer tiene el byte alto (H)
 	ld a, [tile_colliding_pointer+1]

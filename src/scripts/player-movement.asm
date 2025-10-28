@@ -63,8 +63,6 @@ init_player::
    ld [previous_input], a
    ld [current_input], a
    ld [pressed_input], a
-   
-   ;; *** NUEVO: Inicializar sistema de mensaje Press A ***
    call press_a_init
    
    ret
