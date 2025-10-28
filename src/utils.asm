@@ -201,6 +201,27 @@ mute_APU::
 sound_init::
 	ld a, $80
 	ld [NR52], a
+	
+	ldh a, [$40]
+	bit 7, a
+	jr z, .short_delay
+
+	call vblank
+	call vblank
+	jr .after_delay
+
+	.short_delay:
+		ld b, $40
+	.sd_loop:
+		dec b
+		jr nz, .sd_loop
+
+	.after_delay:
+		ld a, $77
+		ldh [NR50], a
+		ld a, $FF
+		ldh [NR51], a
+		ret
 
 	ld a, $77
 	ld [NR50], a
