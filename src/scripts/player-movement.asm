@@ -286,6 +286,10 @@ read_restart:
    ret
 
 restart:
+   ;; Ocultar el mensaje (solo marca el flag)
+   call press_a_hide
+   
+   ;; Recargar el nivel completo
    call level_man_clear
    ld a, [w_current_scene]
    call scene_manager_change_scene

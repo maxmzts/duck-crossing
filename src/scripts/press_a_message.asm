@@ -3,8 +3,6 @@ INCLUDE "macros.inc"
 
 SECTION "Press A Message Variables", WRAM0
 w_press_a_visible:: DS 1  ; 0 = oculto, 1 = visible
-w_press_a_backup_row1:: DS 32  ; Backup de la fila 0 completa
-w_press_a_backup_row2:: DS 32  ; Backup de la fila 1 completa
 
 SECTION "Press A Message ROM", ROM0
 
@@ -16,6 +14,11 @@ press_a_row1:
 
 press_a_row2:
     db $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E
+
+;; Tiles que había originalmente en esas posiciones (del nivel)
+;; Estos tiles son los del cielo/fondo del nivel (usualmente tile $00 o $01)
+press_a_clear_row:
+    db $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ;; Inicializa el sistema de mensaje
 press_a_init::
@@ -31,21 +34,28 @@ press_a_show::
     cp 1
     ret z  ; Ya está visible, no hacer nada
     
-    ;; Hacer backup de las dos primeras filas antes de modificarlas
-    call .backup_rows
+    ;; Esperar VBlank antes de escribir en VRAM
+.wait_vblank1:
+    ld a, [rLY]
+    cp 144
+    jr c, .wait_vblank1
     
     ;; Copiar primera fila de "Press A"
     ld hl, press_a_row1
     ld de, $9800 + 6  ; Primera fila del mensaje (arriba)
-    ld bc, 9  ; 9 tiles
-    
+    ld b, 9  ; 9 tiles
     call .copy_row
+    
+    ;; Esperar VBlank antes de la segunda fila
+.wait_vblank2:
+    ld a, [rLY]
+    cp 144
+    jr c, .wait_vblank2
     
     ;; Copiar segunda fila de "Press A"
     ld hl, press_a_row2
     ld de, $9820 + 6  ; Segunda fila del mensaje
-    ld bc, 9  ; 9 tiles
-    
+    ld b, 9  ; 9 tiles
     call .copy_row
     
     ;; Marcar como visible
@@ -57,83 +67,52 @@ press_a_show::
     ld a, [hl+]
     ld [de], a
     inc de
-    dec bc
-    ld a, b
-    or c
+    dec b
     jr nz, .copy_row
     ret
 
-.backup_rows:
-    ;; Backup fila 0
-    ld hl, $9800
-    ld de, w_press_a_backup_row1
-    ld bc, 32
-    call .copy_backup
-    
-    ;; Backup fila 1
-    ld hl, $9820
-    ld de, w_press_a_backup_row2
-    ld bc, 32
-    
-.copy_backup:
-.wait_vblank_backup:
-    ld a, [rLY]
-    cp 144
-    jr c, .wait_vblank_backup
-    
-    ld a, [hl+]
-    ld [de], a
-    inc de
-    dec bc
-    ld a, b
-    or c
-    jr nz, .copy_backup
-    ret
-
-;; Oculta el mensaje "Press A" y restaura las filas originales
+;; Oculta el mensaje "Press A" poniendo tiles vacíos
 press_a_hide::
     ;; Verificar si está visible
     ld a, [w_press_a_visible]
     cp 0
     ret z  ; Ya está oculto, no hacer nada
     
-    ;; Restaurar fila 0 desde el backup
-    ld hl, w_press_a_backup_row1
-    ld de, $9800
-    ld bc, 32
-    
+    ;; Esperar VBlank antes de limpiar
 .wait_vblank1:
     ld a, [rLY]
     cp 144
     jr c, .wait_vblank1
     
-    call .restore_row
+    ;; Limpiar primera fila con tiles vacíos
+    ld hl, press_a_clear_row
+    ld de, $9800 + 6  ; Primera fila del mensaje
+    ld b, 9
+    call .copy_row
     
-    ;; Restaurar fila 1 desde el backup
-    ld hl, w_press_a_backup_row2
-    ld de, $9820
-    ld bc, 32
-    
+    ;; Esperar VBlank antes de segunda fila
 .wait_vblank2:
     ld a, [rLY]
     cp 144
     jr c, .wait_vblank2
     
-    call .restore_row
+    ;; Limpiar segunda fila con tiles vacíos
+    ld hl, press_a_clear_row
+    ld de, $9820 + 6  ; Segunda fila del mensaje
+    ld b, 9
+    call .copy_row
     
     ;; Marcar como oculto
     xor a
     ld [w_press_a_visible], a
     ret
 
-.restore_row:
+.copy_row:
     ld a, [hl+]
     ld [de], a
     inc de
-    dec bc
-    ld a, b
-    or c
-    jr nz, .restore_row
+    dec b
+    jr nz, .copy_row
     ret
 
 ;; llamar solo cuando LCD esté apagado
