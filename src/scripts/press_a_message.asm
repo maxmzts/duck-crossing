@@ -39,22 +39,12 @@ press_a_show::
     ld de, $9800 + 6  ; Primera fila del mensaje (arriba)
     ld bc, 9  ; 9 tiles
     
-.wait_vblank1:
-    ld a, [rLY]
-    cp 144
-    jr c, .wait_vblank1
-    
     call .copy_row
     
     ;; Copiar segunda fila de "Press A"
     ld hl, press_a_row2
     ld de, $9820 + 6  ; Segunda fila del mensaje
     ld bc, 9  ; 9 tiles
-    
-.wait_vblank2:
-    ld a, [rLY]
-    cp 144
-    jr c, .wait_vblank2
     
     call .copy_row
     

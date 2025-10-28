@@ -145,13 +145,13 @@ scene_manager_render::
 .render_level_1:
     call render_player
     call physics
-    call level_man_update_smoke
+    ;call level_man_update_smoke
     ret
 
 .render_level_2:
     call render_player
     call physics
-    call level_man_update_smoke
+    ;call level_man_update_smoke
     ret
 
 ;; Obtiene la escena actual

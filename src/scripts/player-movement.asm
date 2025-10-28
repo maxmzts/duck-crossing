@@ -297,7 +297,7 @@ kill_player:
    cp 1
    ret z
 
-   call vblank
+   call vblank_with_interrupt
 
    MEMCPY duck_player_dead_up, $8000 + ($20 * $10), 64
 
