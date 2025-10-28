@@ -92,7 +92,7 @@ check_tile_collision:
 ;;
 ;; INPUT:  HL (TX-TY)
 check_victory_collision:
-	;; ✅ NUEVO: Doble verificación - no checkear si ya hay victoria
+	;; checkear si ya hay victoria
 	ld a, [w_victory_flag]
 	cp 1
 	ret z
