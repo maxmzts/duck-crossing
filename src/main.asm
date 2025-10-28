@@ -70,7 +70,8 @@ init::
    reti
 
 load_tiles::
-   MEMCPY Tileset1, $8000, Tileset1.end - Tileset1
+   MEMCPY Tileset1, $8000, 256
+   MEMCPY Tileset1 + 256, $8100, Tileset1.end - (Tileset1 + 256)
    ret
 
 enable_interrupts::

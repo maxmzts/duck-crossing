@@ -85,7 +85,7 @@ scene_manager_update::
 
 ;; Actualiza la lógica de la escena actual
 scene_manager_update_logic::
-    ;; ✅ NUEVO: No actualizar lógica si hay cambio pendiente
+    ;; ✅ No actualizar lógica si hay cambio pendiente
     ld a, [w_scene_change_pending]
     cp 0
     ret nz  ; Si hay cambio pendiente, no hacer nada
@@ -148,11 +148,13 @@ scene_manager_render::
 .render_level_1:
     call render_player
     call physics
+    call level_man_update_smoke
     ret
 
 .render_level_2:
     call render_player
     call physics
+    call level_man_update_smoke
     ret
 
 ;; Obtiene la escena actual

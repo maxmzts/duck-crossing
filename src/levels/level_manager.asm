@@ -1,5 +1,8 @@
 include "constants.inc"
 include "macros.inc"
+
+DEF SMOKE_TILE_ID EQU $15
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DOCUMENTACION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,6 +84,7 @@ w_velocity_frame:: DS 1
 ;; 0 = jugando   ,  1 = victoria
 
 w_victory_flag:: DS 1
+w_smoke_frame:: DS 1
 w_level_man_variables_end:
 
 
@@ -119,9 +123,52 @@ level_man_init::
 
 	xor a
 	ld [w_victory_flag], a
+	ld [w_smoke_frame], a
 
 	MEMCPY Tileset1, $8000, 256
 	MEMCPY Tileset1 + 256, $8100, Tileset1.end - (Tileset1 + 256)
+	ret
+
+level_man_update_smoke::
+	ld a, [w_velocity_frame]
+	and %00000010
+	ret nz
+
+	ld hl, w_smoke_frame
+	inc [hl]
+	ld a, [hl]
+
+	cp 0
+	jr z, .frame_two
+
+	cp 1
+	jr z, .frame_two
+
+	cp 2
+	jr z, .frame_three
+
+	cp 3
+	jr z, .frame_four
+
+	cp 4
+	ld [hl], 0
+
+	ret
+
+	.frame_one
+	MEMSET $8000 + (SMOKE_TILE_ID * $10) + 8, 0, 3
+	ret
+
+	.frame_two
+	MEMCPY smoke_1 + 8, $8000 + (SMOKE_TILE_ID * $10) + 8, 3
+	ret
+
+	.frame_three
+	MEMCPY smoke_2 + 8, $8000 + (SMOKE_TILE_ID * $10) + 8, 3
+	ret
+
+	.frame_four
+	MEMCPY smoke_3 + 8, $8000 + (SMOKE_TILE_ID * $10) + 8, 3
 	ret
 
 level_man_clear::

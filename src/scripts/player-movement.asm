@@ -199,9 +199,9 @@ move:
     ret
 
 continue_move:
-    ld a, [move_dir]
+   ld a, [move_dir]
 
-    cp 0
+   cp 0
    jr z, .right
 
    cp 1
@@ -244,19 +244,19 @@ update_player_tiles::
     ret
 
 .right:
-    MEMCPY duck_player_right, $8000 + ($20 * $10), 64
+    MEMCPY duck_player_right + 4, $8000 + ($20 * $10) + 4, 56
     jr .done
 
 .left:
-    MEMCPY duck_player_left, $8000 + ($20 * $10), 64
+    MEMCPY duck_player_left + 4, $8000 + ($20 * $10) + 4, 56
     jr .done
 
 .up:
-    MEMCPY duck_player_up, $8000 + ($20 * $10), 64
+    MEMCPY duck_player_up + 4, $8000 + ($20 * $10) + 4, 56
     jr .done
 
 .down:
-    MEMCPY duck_player_down, $8000 + ($20 * $10), 64
+    MEMCPY duck_player_down + 4, $8000 + ($20 * $10) + 4, 56
 
 .done:
     ret
@@ -280,8 +280,6 @@ read_restart:
    ret
 
 restart:
-   ;;Ocultar mensaje "Press A" antes de reiniciar ***
-   
    call level_man_clear
    ld a, [w_current_scene]
    call scene_manager_change_scene
@@ -308,7 +306,6 @@ kill_player:
    ld a, 1
    ld [state], a
    
-   ;;Mostrar mensaje "Press A" cuando el jugador muere
    call press_a_show
    
    ret
