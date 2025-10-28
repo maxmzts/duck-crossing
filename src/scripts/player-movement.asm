@@ -280,8 +280,7 @@ read_restart:
    ret
 
 restart:
-   ;; *** NUEVO: Ocultar mensaje "Press A" antes de reiniciar ***
-   call press_a_hide
+   ;;Ocultar mensaje "Press A" antes de reiniciar ***
    
    call level_man_clear
    ld a, [w_current_scene]
@@ -309,7 +308,7 @@ kill_player:
    ld a, 1
    ld [state], a
    
-   ;; *** NUEVO: Mostrar mensaje "Press A" cuando el jugador muere ***
+   ;;Mostrar mensaje "Press A" cuando el jugador muere
    call press_a_show
    
    ret
