@@ -5,8 +5,8 @@ DEF CAR_SLOW_TILES		EQU	$13
 DEF CAR_NORMAL_TILES	EQU	$0F
 DEF CAR_TILES_SIZE 		EQU 2
 
-DEF BUS_TILES 		EQU $04 ;; cambiar
-DEF BUS_TILES_SIZE 	EQU 2
+DEF BUS_TILES 		EQU $15 ;; cambiar
+DEF BUS_TILES_SIZE 	EQU 6
 
 
 ;; ID de victoria
@@ -71,6 +71,11 @@ physics::
 
 	ld a, CAR_NORMAL_TILES
 	ld b, CAR_TILES_SIZE
+	call check_tile_collision
+
+
+	ld a, BUS_TILES
+	ld b, BUS_TILES_SIZE
 	call check_tile_collision
 
 	call check_victory_collision
