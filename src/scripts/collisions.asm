@@ -1,6 +1,8 @@
 ;; IDs de los vehiculos
-DEF CAR_TILES 		EQU $04
-DEF CAR_TILES_SIZE 	EQU 2
+DEF CAR_TILES 			EQU $04
+DEF CAR_SLOW_TILES		EQU	$11
+DEF CAR_NORMAL_TILES	EQU	$13
+DEF CAR_TILES_SIZE 		EQU 2
 
 DEF BUS_TILES 		EQU $04 ;; cambiar
 DEF BUS_TILES_SIZE 	EQU 2
@@ -13,6 +15,12 @@ DEF VIC_TILES_SIZE 	EQU 4
 SECTION "Variables colisiones", WRAM0
 tile_colliding_pointer:: 	DS 2
 tile_ID_colliding:: 		DS 1
+
+SECTION "Tiles de vehiculos", ROM0
+vehicle_ranges::
+	DB CAR_TILES, 		CAR_TILES_SIZE		;;Coche rápido
+	DB CAR_SLOW_TILES,	CAR_TILES_SIZE		;;Coche lento
+	DB $FF, $00 
 
 SECTION "Gestion de colisiones", ROM0
 
@@ -52,6 +60,14 @@ physics::
 	ld b, CAR_TILES_SIZE
 	call check_tile_collision
 
+	ld a, CAR_SLOW_TILES
+	ld b, CAR_TILES_SIZE
+	call check_tile_collision
+
+	ld a, CAR_NORMAL_TILES
+	ld b, CAR_TILES_SIZE
+	call check_tile_collision
+
 	call check_victory_collision
 	
 	ret
@@ -69,8 +85,7 @@ check_tile_collision:
 		inc a
 		dec b
 	jr nz, check_tile_collision
-	ret
-
+	ret 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Como la anterior pero para la victoria en concreto
