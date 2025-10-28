@@ -39,10 +39,6 @@ physics::
 	ld a, [w_scene_change_pending]
 	cp 0
 	ret nz
-
-	ld a, [state]
-	cp 1
-	ret z  ; abortar si el jugador ha muerto
 	
 	ld a, [w_victory_flag]
 	cp 1

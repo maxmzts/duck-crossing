@@ -2,11 +2,11 @@ INCLUDE "constants.inc"
 include "macros.inc"
 
 MACRO MOVE_SPRITE
-   ld hl, player + \2
+   ld hl, player_copy + \2
    ld a, [hl]
    add \1
    ld [hl], a
-   ld hl, player + 4 + \2
+   ld hl, player_copy + 4 + \2
    ld a, [hl]
    add \1
    ld [hl], a
@@ -80,7 +80,7 @@ update_player::
    ;; check input lock
    ld a, [input_lock]
    or a
-   ret nz
+   jr nz, .input_lock
 
    ;; no hay lock poner anular movimiento
    ld a, 4
@@ -90,6 +90,15 @@ update_player::
    call read_input
    call move
 
+   ret
+
+   .input_lock
+   ld hl, input_lock
+   dec [hl]   
+   ld a, [hl]
+   and %00000001 ;; dará 0 cuando el numero sea par
+   ret z
+   call continue_move
    ret
 
 render_player::
@@ -105,13 +114,7 @@ render_player::
 
    call update_player_tiles
 
-   ld hl, input_lock
-   dec [hl]   
-   ld a, [hl]
-   and %00000001 ;; dará 0 cuando el numero sea par
-   ret z
-   call continue_move
-   MEMCPY player, player_copy, 8
+   MEMCPY player_copy, player, 8
    ret
 
 read_input::
@@ -243,6 +246,9 @@ update_player_tiles::
     jr z, .down
     ret
 
+    .loop:
+
+
 .right:
     MEMCPY duck_player_right + 4, $8000 + ($20 * $10) + 4, 56
     jr .done
@@ -256,7 +262,7 @@ update_player_tiles::
     jr .done
 
 .down:
-    MEMCPY duck_player_down + 4, $8000 + ($20 * $10) + 4, 56
+    MEMCPY duck_player_down + 4, $8000 + ($20 * $10) + 4, 54
 
 .done:
     ret

@@ -130,9 +130,6 @@ scene_manager_render::
     
     ld a, [w_current_scene]
     
-    cp SCENE_TITLE
-    jr z, .render_title
-    
     cp SCENE_LEVEL_1
     jr z, .render_level_1
 

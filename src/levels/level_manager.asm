@@ -138,8 +138,8 @@ level_man_update_smoke::
 	inc [hl]
 	ld a, [hl]
 
-	cp 0
-	jr z, .frame_two
+	or 0
+	jr z, .frame_one
 
 	cp 1
 	jr z, .frame_two
