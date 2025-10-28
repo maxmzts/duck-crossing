@@ -13,10 +13,10 @@ MACRO MOVE_SPRITE
 ENDM
 
 MACRO START_MOVE
-	;; Para moverse hay que reiniciar el contador
-	;; de input lock e indicar la dir. de movimiento
-	
-	;; reset input_lock
+   ;; Para moverse hay que reiniciar el contador
+   ;; de input lock e indicar la dir. de movimiento
+   
+   ;; reset input_lock
    ld a, 16
    ld [input_lock], a
    ld a, \1
@@ -43,7 +43,7 @@ current_input:    DS 1
 pressed_input:    DS 1
 state:            DS 1 ; 0 = alive, 1 = dead
 
-SECTION "Player Movement", ROM0	
+SECTION "Player Movement", ROM0  
 
 init_player::
    ;; load sprite tiles
@@ -63,6 +63,10 @@ init_player::
    ld [previous_input], a
    ld [current_input], a
    ld [pressed_input], a
+   
+   ;; *** NUEVO: Inicializar sistema de mensaje Press A ***
+   call press_a_init
+   
    ret
 
 destroy_player::
@@ -75,20 +79,20 @@ update_player::
    cp 0
    jp nz, read_restart
 
-	;; check input lock
-	ld a, [input_lock]
-	or a
-	ret nz
+   ;; check input lock
+   ld a, [input_lock]
+   or a
+   ret nz
 
-	;; no hay lock poner anular movimiento
-	ld a, 4
-	ld [move_dir], a
+   ;; no hay lock poner anular movimiento
+   ld a, 4
+   ld [move_dir], a
 
-	;; read input if needed
-	call read_input
+   ;; read input if needed
+   call read_input
    call move
 
-	ret
+   ret
 
 render_player::
    call update_player_tiles
@@ -278,6 +282,9 @@ read_restart:
    ret
 
 restart:
+   ;; *** NUEVO: Ocultar mensaje "Press A" antes de reiniciar ***
+   call press_a_hide
+   
    call level_man_clear
    ld a, [w_current_scene]
    call scene_manager_change_scene
@@ -301,4 +308,8 @@ kill_player:
 
    ld a, 1
    ld [state], a
+   
+   ;; *** NUEVO: Mostrar mensaje "Press A" cuando el jugador muere ***
+   call press_a_show
+   
    ret
