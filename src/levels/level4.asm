@@ -1,30 +1,30 @@
 include "constants.inc"
 
-SECTION "Level 3 roads", ROM0
+SECTION "Level 4 roads", ROM0
 
-roads_level_3:
+roads_level_4:
 ;;     LY,   TY,  Vel,  Last SCX
-DB     39,    5,    1,     0
-DB     47,    6,    3,     0
-DB     79,   10,    2,     0
-DB     87,   11,    3,     0
+DB     39,    5,    4,     0
+DB     55,    7,    4,     0
+DB     71,    9,    4,     0
+DB     87,   11,    4,     0
 DB    103,   13,    4,     0
-DB    119,   15,    1,     0
+DB    119,   15,    4,     0
 .end:
 
-level_3_init::
+level_4_init::
 	call init_player
 	
 	ld a, SONG_MAIN
     call music_play_id
 	
 	;; cargar tilemap
-	ld hl, level3
+	ld hl, level4
 	call load_32x32_tilemap
 
 	;; Inicializar nivel en el level manager
-	ld hl, roads_level_3
-	ld b, roads_level_3.end - roads_level_3
+	ld hl, roads_level_4
+	ld b, roads_level_4.end - roads_level_4
 	call level_man_init
 
 	;; solo queremos el interrupt de
@@ -34,8 +34,8 @@ level_3_init::
 
 	ret
 
-level_3_check_victory::
-	;; ✅ NUEVO: Si ya hay cambio de escena pendiente, no hacer nada
+level_4_check_victory::
+	;; Si ya hay cambio de escena pendiente, no hacer nada
 	ld a, [w_scene_change_pending]
 	cp 1
 	ret z
@@ -44,12 +44,12 @@ level_3_check_victory::
 	cp 1
 	ret nz
 	
-	;; ✅ IMPORTANTE: Reiniciar el flag de victoria INMEDIATAMENTE
+	;;Reiniciar el flag de victoria INMEDIATAMENTE
 	;; antes de cualquier otra cosa para evitar doble detección
 	xor a
 	ld [w_victory_flag], a
 	
-	;; ✅ NUEVO: Reiniciar el puntero de colisión a un valor seguro
+	;;Reiniciar el puntero de colisión a un valor seguro
 	;; para evitar que se detecte de nuevo en el mismo frame
 	ld a, $98
 	ld [tile_colliding_pointer], a
@@ -58,8 +58,8 @@ level_3_check_victory::
 	ld [tile_ID_colliding], a
 	
 	call level_man_clear
-	;; cambiar a nivel 4
-	ld a, SCENE_LEVEL_4
+	;; cambiar a nivel 5
+	ld a, SCENE_LEVEL_5
 	call scene_manager_change_scene 
 	
 	ret
