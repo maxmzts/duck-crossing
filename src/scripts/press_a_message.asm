@@ -7,18 +7,14 @@ w_press_a_visible:: DS 1  ; 0 = oculto, 1 = visible
 SECTION "Press A Message ROM", ROM0
 
 ;; Datos de los tiles de "Press A" desde el title screen
-;; Fila 1: tiles $3D-$45 (9 tiles)
-;; Fila 2: tiles $46-$4E (9 tiles)
+;; Una sola fila: tiles $55-$59 (5 tiles)
 press_a_row1:
-    db $3D, $3E, $3F, $40, $41, $42, $43, $44, $45
-
-press_a_row2:
-    db $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E
+    db $55, $56, $57, $58, $59
 
 ;; Tiles que había originalmente en esas posiciones (del nivel)
 ;; Estos tiles son los del cielo/fondo del nivel (usualmente tile $00 o $01)
 press_a_clear_row:
-    db $00, $00, $00, $00, $00, $00, $00, $00, $00
+    db $00, $00, $00, $00, $00
 
 ;; Inicializa el sistema de mensaje
 press_a_init::
@@ -27,7 +23,7 @@ press_a_init::
     ret
 
 ;; Muestra el mensaje "Press A" arriba en el centro
-;; Posición: fila 0-1, columnas 6-14 (arriba centrado)
+;; Posición: fila 0, columnas 6-10 (arriba centrado)
 press_a_show::
     ;; Verificar si ya está visible
     ld a, [w_press_a_visible]
@@ -40,22 +36,10 @@ press_a_show::
     cp 144
     jr c, .wait_vblank1
     
-    ;; Copiar primera fila de "Press A"
+    ;; Copiar fila de "Press A"
     ld hl, press_a_row1
     ld de, $9800 + 6  ; Primera fila del mensaje (arriba)
-    ld b, 9  ; 9 tiles
-    call .copy_row
-    
-    ;; Esperar VBlank antes de la segunda fila
-.wait_vblank2:
-    ld a, [rLY]
-    cp 144
-    jr c, .wait_vblank2
-    
-    ;; Copiar segunda fila de "Press A"
-    ld hl, press_a_row2
-    ld de, $9820 + 6  ; Segunda fila del mensaje
-    ld b, 9  ; 9 tiles
+    ld b, 5  ; 5 tiles
     call .copy_row
     
     ;; Marcar como visible
@@ -84,22 +68,10 @@ press_a_hide::
     cp 144
     jr c, .wait_vblank1
     
-    ;; Limpiar primera fila con tiles vacíos
+    ;; Limpiar fila con tiles vacíos
     ld hl, press_a_clear_row
     ld de, $9800 + 6  ; Primera fila del mensaje
-    ld b, 9
-    call .copy_row
-    
-    ;; Esperar VBlank antes de segunda fila
-.wait_vblank2:
-    ld a, [rLY]
-    cp 144
-    jr c, .wait_vblank2
-    
-    ;; Limpiar segunda fila con tiles vacíos
-    ld hl, press_a_clear_row
-    ld de, $9820 + 6  ; Segunda fila del mensaje
-    ld b, 9
+    ld b, 5
     call .copy_row
     
     ;; Marcar como oculto
@@ -117,24 +89,14 @@ press_a_hide::
 
 ;; llamar solo cuando LCD esté apagado
 press_a_clear_vram::
-    ;; Limpiar primera fila
+    ;; Limpiar fila
     ld de, $9800 + 6  ; Primera fila del mensaje 
     ld a, $00
-    ld b, 9
+    ld b, 5
 .clear_row1:
     ld [de], a
     inc de
     dec b
     jr nz, .clear_row1
-    
-    ;; Limpiar segunda fila
-    ld de, $9820 + 6  ; Segunda fila del mensaje
-    ld a, $00
-    ld b, 9
-.clear_row2:
-    ld [de], a
-    inc de
-    dec b
-    jr nz, .clear_row2
     
     ret
