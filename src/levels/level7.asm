@@ -9,7 +9,7 @@ DB     71,    9,    1,     0
 DB     87,   11,    4,     0
 DB    103,   13,    2,     0
 DB    119,   15,    1,     0
-
+DB    200,    0,    0,     0  ;; fuera de la pantalla
 .end:
 
 level_7_init::
