@@ -73,27 +73,27 @@ scene_manager_update::
     
 .init_level_1:
     call level_1_init
-    call render_player  ; Renderizar jugador después de cargar nivel
+    call render_player  
     jr .finish_change
 
 .init_level_2:
     call level_2_init
-    call render_player  ; Renderizar jugador después de cargar nivel
+    call render_player  
     jr .finish_change
 
 .init_level_3:
     call level_3_init
-    call render_player  ; Renderizar jugador después de cargar nivel
+    call render_player  
     jr .finish_change
 
 .init_level_4:
     call level_4_init
-    call render_player  ; Renderizar jugador después de cargar nivel
+    call render_player  
     jr .finish_change
 
 .init_level_5:
     call level_5_init
-    call render_player  ; Renderizar jugador después de cargar nivel
+    call render_player  
     jr .finish_change
     
 .finish_change:
@@ -207,29 +207,29 @@ scene_manager_render::
     
 .render_level_1:
     call render_player
-    call physics
+    ;call physics
     ;call level_man_update_smoke
     ret
 
 .render_level_2:
     call render_player
-    call physics
+    ;call physics
     ;call level_man_update_smoke
     ret
 
 .render_level_3:
     call render_player
-    call physics
+    ;call physics
     ret
 
 .render_level_4:
     call render_player
-    call physics
+    ;call physics
     ret
 
 .render_level_5:
     call render_player
-    call physics
+    ;call physics
     ret
 
 ;; Obtiene la escena actual

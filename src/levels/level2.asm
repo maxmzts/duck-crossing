@@ -24,6 +24,7 @@ level_2_init::
 
 	;; Inicializar nivel en el level manager
 	ld hl, roads_level_2
+	ld de, level2
 	ld b, roads_level_2.end - roads_level_2
 	call level_man_init
 
