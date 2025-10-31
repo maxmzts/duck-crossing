@@ -63,6 +63,15 @@ scene_manager_update::
     cp SCENE_LEVEL_5
     jr z, .init_level_5
     
+    cp SCENE_LEVEL_6
+    jr z, .init_level_6
+
+    ;;cp SCENE_LEVEL_7
+    ;;jr z, .init_level_7
+
+    ;;cp SCENE_LEVEL_8
+    ;;jr z, .init_level_8
+    
     ;; Si no coincide con ninguna, ir a título por defecto
     jr .init_title
     
@@ -95,6 +104,21 @@ scene_manager_update::
     call level_5_init
     call render_player  
     jr .finish_change
+
+.init_level_6:
+    call level_6_init
+    call render_player  ; Renderizar jugador después de cargar nivel
+    jr .finish_change
+
+;;.init_level_7:
+    ;;call level_7_init
+    ;;call render_player  ; Renderizar jugador después de cargar nivel
+    ;;jr .finish_change
+
+;;.init_level_8:
+    ;;call level_8_init
+    ;;call render_player  ; Renderizar jugador después de cargar nivel
+    ;;jr .finish_change
     
 .finish_change:
     ;; Marcar que ya no hay cambio pendiente
@@ -133,6 +157,15 @@ scene_manager_update_logic::
 
     cp SCENE_LEVEL_5
     jr z, .update_level_5
+
+    cp SCENE_LEVEL_6
+    jr z, .update_level_6
+
+    ;;cp SCENE_LEVEL_7
+    ;;jr z, .update_level_7
+
+    ;;cp SCENE_LEVEL_8
+    ;;jr z, .update_level_8
     
     ret  ; Escena no reconocida
     
@@ -175,6 +208,27 @@ scene_manager_update_logic::
     call level_5_check_victory
     ret
 
+.update_level_6:
+    call update_player
+    call restart_roads_scroll_loop
+    call update_physics
+    call level_6_check_victory
+    ret
+
+;;.update_level_7:
+    ;;call update_player
+    ;;call restart_roads_scroll_loop
+    ;;call update_physics
+    ;;call level_7_check_victory
+    ;;ret
+
+;;.update_level_8:
+    ;;call update_player
+    ;;call restart_roads_scroll_loop
+    ;;call update_physics
+    ;;call level_8_check_victory
+    ;;ret
+
 ;; Renderiza la escena actual
 scene_manager_render::
     ;; No renderizar si hay cambio pendiente
@@ -198,6 +252,15 @@ scene_manager_render::
 
     cp SCENE_LEVEL_5
     jr z, .render_level_5
+
+    cp SCENE_LEVEL_6
+    jr z, .render_level_6
+
+    ;;cp SCENE_LEVEL_7
+    ;;jr z, .render_level_7
+
+    ;;cp SCENE_LEVEL_8
+    ;;jr z, .render_level_8
     
     ret  ; Escena no reconocida
     
@@ -231,6 +294,21 @@ scene_manager_render::
     call render_player
     ;call physics
     ret
+
+.render_level_6:
+    call render_player
+    call physics
+    ret
+
+;;.render_level_7:
+    ;;call render_player
+    ;;call physics
+    ;;ret
+
+;;.render_level_8:
+    ;;call render_player
+    ;;call physics
+    ;;ret
 
 ;; Obtiene la escena actual
 ;; OUTPUT: A = escena actual

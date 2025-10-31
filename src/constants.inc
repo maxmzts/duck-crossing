@@ -69,6 +69,9 @@ DEF SCENE_LEVEL_2   equ 3
 DEF SCENE_LEVEL_3   equ 4
 DEF SCENE_LEVEL_4   equ 5
 DEF SCENE_LEVEL_5   equ 6
+DEF SCENE_LEVEL_6   equ 7
+DEF SCENE_LEVEL_7   equ 8
+DEF SCENE_LEVEL_8   equ 9
 
 
 ;; Button bits (para detectar A presionado)
