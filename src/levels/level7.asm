@@ -24,6 +24,7 @@ level_7_init::
 
 	;; Inicializar nivel en el level manager
 	ld hl, roads_level_7
+	ld de, level7
 	ld b, roads_level_7.end - roads_level_7
 	call level_man_init
 
@@ -59,7 +60,7 @@ level_7_check_victory::
 	
 	call level_man_clear
 	;; cambiar a nivel 8
-	;;ld a, SCENE_LEVEL_8
+	ld a, SCENE_LEVEL_8
 	call scene_manager_change_scene 
 	
 	ret
