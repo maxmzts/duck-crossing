@@ -5,8 +5,10 @@ DEF CAR_SLOW_TILES		EQU	$13
 DEF CAR_NORMAL_TILES	EQU	$0F
 DEF CAR_TILES_SIZE 		EQU 2
 
-DEF BUS_TILES 		EQU $15 ;; cambiar
+DEF BUS_TILES 		EQU $16 ;; cambiar
 DEF BUS_TILES_SIZE 	EQU 6
+DEF BUS2_TILES_SIZE 	EQU 4
+
 
 
 ;; ID de victoria
@@ -31,11 +33,19 @@ update_physics::
 	ret nz
 	
 	ld hl, player_copy ;; usamos la copia de WRAM para no acceder a la OAM
-	;; actualizar puntero a VRAM
+	;; cargar puntero de tilemap
+	ld a, [w_current_tilemap_rom_pointer] 
+	ld d, a 
+	ld a, [w_current_tilemap_rom_pointer+1]
+	ld e, a 
+
 	call get_address_of_tile_being_touched
+	;; HL ahora tiene la dirección donde mirar del tilemap
+	call collide
 	ret
 
-physics::
+;; INPUT: HL (posicion de memoria del tilemap que mirar)
+collide::
 	ld a, [w_scene_change_pending]
 	cp 0
 	ret nz
@@ -47,12 +57,6 @@ physics::
 	ld a, [w_victory_flag]
 	cp 1
 	ret z  ; abortar si hay victoria
-	
-	;; Tomar puntero a VRAM calculado en el update
-	ld a, [tile_colliding_pointer]
-	ld h, a                            ; tile_colliding_pointer tiene el byte alto (H)
-	ld a, [tile_colliding_pointer+1]
-	ld l, a                            ; tile_colliding_pointer+1 tiene el byte bajo (L)
 
 	ld a, [hl]
 	ld [tile_ID_colliding], a
@@ -76,6 +80,10 @@ physics::
 
 	ld a, BUS_TILES
 	ld b, BUS_TILES_SIZE
+	call check_tile_collision
+
+	ld a, BUS_TILES
+	ld b, BUS2_TILES_SIZE
 	call check_tile_collision
 
 	call check_victory_collision

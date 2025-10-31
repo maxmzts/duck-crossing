@@ -1,31 +1,31 @@
 include "constants.inc"
 
-SECTION "Level 2 roads", ROM0
+SECTION "Level 7 roads", ROM0
 
-roads_level_2:
+roads_level_7:
 ;;     LY,   TY,  Vel,  Last SCX
-DB     55,    7,    0,     0
-DB     63,    8,    1,     0
-DB     79,   10,    1,     0
-DB     87,   11,    3,     0
-DB    111,   14,    3,     0
-DB    119,   15,    3,     0
+DB     55,    8,    3,     0
+DB     71,    9,    1,     0
+DB     87,   11,    4,     0
+DB    103,   13,    2,     0
+DB    119,   15,    1,     0
+DB    200,    0,    0,     0  ;; fuera de la pantalla
 .end:
 
-level_2_init::
+level_7_init::
 	call init_player
 	
 	ld a, SONG_MAIN
     call music_play_id
 	
 	;; cargar tilemap
-	ld hl, level2
+	ld hl, level7
 	call load_32x32_tilemap
 
 	;; Inicializar nivel en el level manager
-	ld hl, roads_level_2
-	ld de, level2
-	ld b, roads_level_2.end - roads_level_2
+	ld hl, roads_level_7
+	ld de, level7
+	ld b, roads_level_7.end - roads_level_7
 	call level_man_init
 
 	;; solo queremos el interrupt de
@@ -35,7 +35,7 @@ level_2_init::
 
 	ret
 
-level_2_check_victory::
+level_7_check_victory::
 	;; Si ya hay cambio de escena pendiente, no hacer nada
 	ld a, [w_scene_change_pending]
 	cp 1
@@ -59,8 +59,8 @@ level_2_check_victory::
 	ld [tile_ID_colliding], a
 	
 	call level_man_clear
-	;; cambiar a nivel 2
-	ld a, SCENE_LEVEL_3
+	;; cambiar a nivel 8
+	ld a, SCENE_LEVEL_8
 	call scene_manager_change_scene 
 	
 	ret

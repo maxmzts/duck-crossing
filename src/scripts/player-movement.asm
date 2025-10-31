@@ -301,6 +301,10 @@ kill_player:
    cp 1
    ret z
 
+   ld a, 1
+   ld [state], a
+
+
    call vblank_with_interrupt
 
    MEMCPY duck_player_dead_up, $8000 + ($20 * $10), 64
@@ -312,9 +316,6 @@ kill_player:
 
    ld a, SONG_DEATH
    call music_play_id
-
-   ld a, 1
-   ld [state], a
    
    call press_a_show
    

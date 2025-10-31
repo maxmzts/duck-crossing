@@ -85,6 +85,7 @@ w_velocity_frame:: DS 1
 
 w_victory_flag:: DS 1
 w_smoke_frame:: DS 1
+w_current_tilemap_rom_pointer:: DS 2
 w_level_man_variables_end:
 
 
@@ -92,13 +93,19 @@ w_level_man_variables_end:
 
 SECTION "Level Manager Code", ROM0
 
-;; INPUT:  HL (level roads array), B (roads array length)
+;; INPUT:  HL (level roads array), DE (Tilemap start), B (roads array length)
 level_man_init::
-	;; inicializar puntero
+	;; inicializar puntero scroll carretera
 	ld a, h
 	ld [w_next_road_pointer], a
 	ld a, l
 	ld [w_next_road_pointer+1], a
+
+	;; inicializar puntero tilemap
+	ld a, d
+	ld [w_current_tilemap_rom_pointer], a
+	ld a, e
+	ld [w_current_tilemap_rom_pointer+1], a
 
 	;; poner en rLYC la primera linea de la 
 	;; primera carretera
@@ -130,6 +137,10 @@ level_man_init::
 	ret
 
 level_man_update_smoke::
+	ld a, [rLY]
+	cp 144
+	ret c     ;; si hay carry es que estamos fuera de vblank y no queremos hacer nada
+
 	ld a, [w_velocity_frame]
 	and %00000010
 	ret nz

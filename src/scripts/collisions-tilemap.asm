@@ -25,10 +25,12 @@ SECTION "Colisiones tilemap", ROM0
 ;;
 ;; 📥 INPUT:
 ;; HL: Address of the Sprite Component
+;; DE: Start of the tilemap (9800 if VRAM)
 ;; 🔙 OUTPUT;
 ;; HL: VRAM Address of the tile the sprite is touching
 ;: B:  Road Y Tile address
 get_address_of_tile_being_touched::
+	push de   ;; guardar el inicio del tilemap
 	;; 1. Convert Y to TY, and X to TX
 	ld a, [hl+]
 	add 8  			;; Poner centro de sprite 
@@ -59,14 +61,9 @@ get_address_of_tile_being_touched::
 	.update_pointer
 	ld l, e
 	ld a, d
+	pop de      ;; recuperar el inicio del tilemap
 	call calculate_address_from_tx_and_ty
 	;; hl tiene la posicion de VRAM
-
-	;; actualizar apuntador 
-	ld a, h
-	ld [tile_colliding_pointer], a 
-	ld a, l
-	ld [tile_colliding_pointer+1], a 
 	ret
 
 ;; INPUT:  A (TY),  HL (road tiles array), C (number of roads)
@@ -161,14 +158,14 @@ convert_y_to_ty:
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Calculates an VRAM Tilemap Address from itx tile
+;; Calculates an Tilemap Address from itx tile
 ;; coordinates (TX, TY). 
 ;;
-;; INPUT:   L (TY),  A (TX)
+;; INPUT:   L (TY),  A (TX), DE (Start of the tilemap)
 ;; OUTPUT:  HL (Address where the (TX, TY) tile is stored)
 
 calculate_address_from_tx_and_ty:
-	ld de, $9800
+	;; ld de, $9800
 	ld h, 0
 
 	add hl, hl  ;; x2
