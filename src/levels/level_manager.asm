@@ -137,6 +137,10 @@ level_man_init::
 	ret
 
 level_man_update_smoke::
+	ld a, [rLY]
+	cp 144
+	ret c     ;; si hay carry es que estamos fuera de vblank y no queremos hacer nada
+
 	ld a, [w_velocity_frame]
 	and %00000010
 	ret nz
